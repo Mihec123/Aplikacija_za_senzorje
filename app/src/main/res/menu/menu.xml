@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/exportD"
+        android:icon="@drawable/ic_file_download_black_45dp"
+        android:title="@string/exportD"/>
+    <item android:id="@+id/importD"
+        android:icon="@drawable/ic_file_upload_black_45dp"
+        android:title="@string/importD" />
+    <item android:id="@+id/dodaj_senzor"
+        android:icon="@drawable/ic_add_black_45dp"
+        android:title="@string/dodaj_senzor" />
+    <item android:id="@+id/dodaj_grupo"
+        android:icon="@drawable/ic_add_black_45dp"
+        android:title="@string/dodaj_grupo" />
+    <item android:id="@+id/sort"
+        android:title="@string/sort" />
+</menu>

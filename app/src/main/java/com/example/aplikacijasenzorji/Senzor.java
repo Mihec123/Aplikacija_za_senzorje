@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class Senzor {
     private int responseCode;
     private boolean vsaj_ena_temeratura = false;
     private float SLABATEMP = -99999;
+    private List<String> imena_temperaturnih_senzorjev = new ArrayList<>();
 
 
 
@@ -217,5 +220,13 @@ public class Senzor {
 
     public List<Float> getTemperatura() {
         return temperatura;
+    }
+
+    public List<String> getImena_temperaturnih_senzorjev() {
+        return imena_temperaturnih_senzorjev;
+    }
+
+    public void addImena_temperaturnih_senzorjev(String ime) {
+        this.imena_temperaturnih_senzorjev.add(ime);
     }
 }

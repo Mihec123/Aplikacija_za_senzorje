@@ -6,16 +6,30 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+
+
+    private Config config;
+    private String filename = "devices.txt";
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -36,40 +50,46 @@ public class MainActivity extends AppCompatActivity {
         dovoljenje = checkPermissionForReadExtertalStorage();
         if (!dovoljenje){
             try {
-                requestPermissionForWriteExtertalStorage();
+                requestPermissionForReadExtertalStorage();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
-        Config test_config = new Config();
+        config = new Config();
 
-        test_config.getConfigurationValue();
 
-//        Senzor test = new Senzor();
-//        test.setIp("213.157.239.205:8390");
-//        test.setZeton("12908390");
-//        test.setIme("testni_senzor");
-//        test.setId(1);
-//        boolean povezi = test.SensorCheckConnection();
-//        Log.d("INTERNET", String.valueOf(povezi));
-//        boolean temperature = test.SensorCheckTemerature();
-//        if (temperature)
-//        {
-//         List temp = new ArrayList();
-//         temp = test.getTemperatura();
-//         Log.d("INTERNET", String.valueOf(temp));
-//        }
-//
-//        Grupa grupa_test = new Grupa();
-//        grupa_test.addSenzor(test);
-//        grupa_test.setId(1);
-//        grupa_test.setIme("testna_grupa");
-//
-//        test_config.addGrupe(grupa_test);
-//        test_config.addSenzorji(test);
-//        test_config.writeConfigurationsValues();
+        //poberemo konfiguracijo, ce ta ostaja sicer config ostane nova konfiguracija
+        config.getConfigurationValue(this.getFilesDir() +"/"+filename);
+
+        /////////////////////////////////////////////////////////////////////////////////
+
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics ();
+        display.getMetrics(outMetrics);
+        final float scale = outMetrics.density;
+        //scale bomo rabl da px pretvormo v dp
+        /////////////////////////////////////////////////////////////////////
+
+        //zacnemo postavljat gumbe
+        LinearLayout okno = (LinearLayout) findViewById(R.id.prostor_za_gumbe);
+        Gumb_Creation gumbi = new Gumb_Creation();
+        Grupa grupa;
+        Senzor senzor;
+        RelativeLayout temp;
+        for (int stevilo:config.getVrstni_red()){
+            if (stevilo<0){
+                grupa = config.getGrupe().get(config.getIdGrup().indexOf(stevilo));
+                temp = gumbi.OblikaGumbaGrupa(grupa.getIme(),grupa.getBarva(),false,false,false,grupa.getStevilo_senzorjev(),false,scale,this);
+            }
+            else{
+                senzor = config.getSenzorji().get(config.getIdSenzor().indexOf(stevilo));
+                temp = gumbi.OblikaGumbaSenzor(senzor.getIme(),senzor.getBarva(),false,false,scale,this);
+            }
+            okno.addView(temp);
+        }
+
     }
 
     public boolean checkPermissionForReadExtertalStorage() {
@@ -105,6 +125,39 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //naredimo meni in klicemo primeren layout iz folderja menu
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // obravnavamo izbrane primere iz menija
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.dodaj_senzor:
+                intent = new Intent(this, AddSenzorActivity.class);
+                startActivity(intent);
+                this.finish();
+                return true;
+            case R.id.dodaj_grupo:
+                intent = new Intent(this, AddGroupActivity.class);
+                startActivity(intent);
+                this.finish();
+                return true;
+            case R.id.sort:
+                intent = new Intent(this, SortActivity.class);
+                startActivity(intent);
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

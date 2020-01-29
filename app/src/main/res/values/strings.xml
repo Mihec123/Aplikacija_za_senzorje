@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">AplikacijaSenzorji</string>
+    <string name="exportD">Export</string>
+    <string name="importD">Import</string>
+    <string name="dodaj_senzor">Add sensor</string>
+    <string name="dodaj_grupo">Add group</string>
+    <string name="sort">Sort</string>
+    <string name="changeN">change name</string>
+    <string name="save">save</string>
+    <string name="hint_name">name</string>
+    <string name="hint_ip">ip i.e. 192.168.1.1:8080</string>
+    <string name="hint_api_key">api key</string>
+    <string name="number_of_sensors">number of sensors</string>
+    <string name="humidity">humidity</string>
+    <string name="no_value">/</string>
+    <string name="sensor">sensor</string>
+    <string name="grupa">group</string>
+    <string name="toast_ni_vse_izpolnjeno">You need to fill all!</string>
 </resources>

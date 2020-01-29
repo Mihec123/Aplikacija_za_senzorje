@@ -1,7 +1,9 @@
 package com.example.aplikacijasenzorji;
 
 import android.graphics.Color;
+import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,11 +48,11 @@ public class Grupa {
         Izhod:
         -int i
         */
-        int dolzina = senzorji.size();
+        int dolzina = this.senzorji.size();
         Senzor senzor;
         for(int i= 0;i <dolzina;i++)
         {
-            senzor = senzorji.get(i);
+            senzor = this.senzorji.get(i);
             if (senzor.getId() == id)
             {
                 return i;
@@ -69,12 +71,17 @@ public class Grupa {
         Izhod:
         -Senzor senzor
         */
-        return senzorji.get(i);
+        return this.senzorji.get(i);
     }
 
     public void addSenzor(Senzor senzor){
-        senzorji.add(senzor);
-        stevilo_senzorjev += 1;
+        this.senzorji.add(senzor);
+        this.stevilo_senzorjev += 1;
+    }
+
+    public void addSenzorPosition(Senzor senzor, int pozicija){
+        this.senzorji.add(pozicija,senzor);
+        this.stevilo_senzorjev += 1;
     }
 
     public void removeSenzorId(int id){
@@ -87,8 +94,8 @@ public class Grupa {
         */
         int pozicija = findSenzorByIdInt(id);
         if (pozicija != -1){
-            senzorji.remove(pozicija);
-            stevilo_senzorjev -= 1;
+            this.senzorji.remove(pozicija);
+            this.stevilo_senzorjev -= 1;
         }
 
     }
@@ -100,8 +107,8 @@ public class Grupa {
         -int pozicija
         Izhod:/
         */
-        senzorji.remove(pozicija);
-        stevilo_senzorjev -= 1;
+        this.senzorji.remove(pozicija);
+        this.stevilo_senzorjev -= 1;
     }
 
     public int getStevilo_senzorjev() {
@@ -131,4 +138,6 @@ public class Grupa {
     public void setBarva(int barva) {
         this.barva = barva;
     }
+
+    public List<Senzor> getSenzorji(){return senzorji;}
 }
