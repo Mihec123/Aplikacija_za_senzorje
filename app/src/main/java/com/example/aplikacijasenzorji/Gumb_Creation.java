@@ -18,7 +18,7 @@ public class Gumb_Creation {
 
 
     //gumb za senzor
-    public RelativeLayout OblikaGumbaSenzor(String ime_senzorja,int Barva, Boolean prizgan, Boolean online, float scale, Context context){
+    public RelativeLayout OblikaGumbaSenzor(String ime_senzorja, int Barva, Boolean prizgan, Boolean online, int id, float scale, View.OnClickListener listener, Context context){
 
 
         //v funkcijah moramo vnasat v pikslih pretvormo dp v pixle
@@ -193,7 +193,7 @@ public class Gumb_Creation {
 
         ToggleButton OnOff = new ToggleButton(context);
         OnOff.setId(View.generateViewId());
-        OnOff.setTag("onoff");
+        OnOff.setTag(String.valueOf(id) + ",onoff");
 
         //odstranimo napise
         OnOff.setText("");
@@ -229,6 +229,7 @@ public class Gumb_Creation {
         //dodamo gumb za vec opcij
 
         Button vec_opcij = new Button(context);
+        vec_opcij.setTag(String.valueOf(id)+",vec");
 
         lp = new RelativeLayout.LayoutParams(
                 dp40,
@@ -241,6 +242,7 @@ public class Gumb_Creation {
         lp.setMargins(0,dp5,dp5,dp5);
 
         vec_opcij.setLayoutParams(lp);
+        vec_opcij.setOnClickListener(listener);
         rl.addView(vec_opcij);
 
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -249,7 +251,7 @@ public class Gumb_Creation {
     }
 
     //gumb za grupo
-    public RelativeLayout OblikaGumbaGrupa(String ime_grupe,int Barva, Boolean prizgan, Boolean online, Boolean prizgani_vsi_v_grupi,int stevilo_senzorjev,Boolean prizgan_noben, float scale, Context context){
+    public RelativeLayout OblikaGumbaGrupa(String ime_grupe, int Barva, Boolean prizgan, Boolean online, Boolean prizgani_vsi_v_grupi, int stevilo_senzorjev, Boolean prizgan_noben, float scale, int id, View.OnClickListener listener, Context context){
 
 
         //v funkcijah moramo vnasat v pikslih pretvormo dp v pixle
@@ -455,7 +457,7 @@ public class Gumb_Creation {
 
         ToggleButton OnOff = new ToggleButton(context);
         OnOff.setId(View.generateViewId());
-        OnOff.setTag("onoff");
+        OnOff.setTag(String.valueOf(id)+",onoff");
 
         //odstranimo napise
         OnOff.setText("");
@@ -494,6 +496,7 @@ public class Gumb_Creation {
         //dodamo gumb za vec opcij
 
         Button vec_opcij = new Button(context);
+        vec_opcij.setTag(String.valueOf(id)+",vec");
 
         lp = new RelativeLayout.LayoutParams(
                 dp40,
@@ -506,6 +509,7 @@ public class Gumb_Creation {
         lp.setMargins(0,dp5,dp5,dp5);
 
         vec_opcij.setLayoutParams(lp);
+        vec_opcij.setOnClickListener(listener);
         rl.addView(vec_opcij);
 
         ///////////////////////////////////////////////////////////////////////////////////////////

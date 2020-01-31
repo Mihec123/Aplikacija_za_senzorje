@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -74,8 +75,10 @@ public class AddSenzorActivity extends AppCompatActivity implements View.OnClick
         //pogledamo tag da ugotovimo ker gumb smo tag = 0 smo klukca, tag=1 smo check connection, tag = 2 smo color picker
         if (str.equals("0")) {
             //preverimo najprej ce smo v vsa polja nekaj napisali
-                boolean vsa_polja_izpolnjena = (!String.valueOf(ime.getText()).equals("") && !String.valueOf(ip.getText()).equals("") && !String.valueOf(token.getText()).equals("") && !String.valueOf(vlaga.getText()).equals("") && !String.valueOf(dolzina.getText()).equals(""));
-                if (vsa_polja_izpolnjena) {
+                boolean vsa_polja_izpolnjena = (!String.valueOf(ime.getText()).equals("") && !String.valueOf(ip.getText()).equals("") && !String.valueOf(token.getText()).equals("")  && !String.valueOf(dolzina.getText()).equals(""));
+                //prevermo se ce mamo vlago mamo lahko najvec en senzor za temperaturo
+                boolean vlaga_temperatura = ((vlaga.isChecked() && Integer.parseInt(String.valueOf(dolzina.getText())) < 2) || !vlaga.isChecked());
+                if (vsa_polja_izpolnjena && vlaga_temperatura) {
                     Log.d("config_class", "dodajam");
 
                     //naredimo nov senzor in noter damo vse podatke, potem bomo ta senzor dali v config in config zapisali v file
@@ -105,7 +108,7 @@ public class AddSenzorActivity extends AppCompatActivity implements View.OnClick
                     startActivity(refresh);
                     this.finish();
                 }
-                else{
+                else if(vlaga_temperatura){
                     //vsa polja niso izpolnjena zato vrnemo toast
                     Context context = getApplicationContext();
                     CharSequence text = getString(R.string.toast_ni_vse_izpolnjeno);
@@ -114,10 +117,46 @@ public class AddSenzorActivity extends AppCompatActivity implements View.OnClick
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
                 }
+                else{
+                    //vlaga prevec senzorjev
+                    Context context = getApplicationContext();
+                    CharSequence text = getString(R.string.toast_prevec_senzorjev);
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
 
         }
         else if (str.equals("1")) {
-            //se ni implementirano
+            //preverimo povezavo
+            senzor.setIp(String.valueOf(ip.getText()));
+            senzor.setPrikazi_vlago(vlaga.isChecked());
+            senzor.setStevilo_podsenzorjev(Integer.parseInt(String.valueOf(dolzina.getText())));
+            senzor.setZeton(String.valueOf(token.getText()));
+            senzor.setIme(String.valueOf(ime.getText()));
+            senzor.setId(smallestMissingUnsorted(config.getIdSenzor()));
+
+            boolean test = senzor.SensorCheckConnection();
+            if (test){
+                //uspel smo se povezat na senzor
+                Context context = getApplicationContext();
+                CharSequence text = getString(R.string.povezava_uspesna);
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+            }
+            else{
+                //nismo se uspel povezat na senzor
+                Context context = getApplicationContext();
+                CharSequence text = getString(R.string.povezava_neuspesna);
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+
+            }
 
         } else if (str.equals("2"))  {
 
@@ -165,5 +204,14 @@ public class AddSenzorActivity extends AppCompatActivity implements View.OnClick
         seznam.remove(seznam.size()-1);
         Log.i("config_class", String.valueOf(seznam));
         return flags.length;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        Intent refresh = new Intent(this, MainActivity.class);
+        startActivity(refresh);
+        this.finish();
+        return super.onKeyDown(keyCode, event);
     }
 }

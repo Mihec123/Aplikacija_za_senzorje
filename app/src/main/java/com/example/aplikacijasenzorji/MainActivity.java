@@ -17,15 +17,17 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
 
     private Config config;
@@ -81,11 +83,12 @@ public class MainActivity extends AppCompatActivity {
         for (int stevilo:config.getVrstni_red()){
             if (stevilo<0){
                 grupa = config.getGrupe().get(config.getIdGrup().indexOf(stevilo));
-                temp = gumbi.OblikaGumbaGrupa(grupa.getIme(),grupa.getBarva(),false,false,false,grupa.getStevilo_senzorjev(),false,scale,this);
+                temp = gumbi.OblikaGumbaGrupa(grupa.getIme(),grupa.getBarva(),false,false,false,grupa.getStevilo_senzorjev(),false,scale,grupa.getId(),MainActivity.this,this);
+
             }
             else{
                 senzor = config.getSenzorji().get(config.getIdSenzor().indexOf(stevilo));
-                temp = gumbi.OblikaGumbaSenzor(senzor.getIme(),senzor.getBarva(),false,false,scale,this);
+                temp = gumbi.OblikaGumbaSenzor(senzor.getIme(),senzor.getBarva(),false,false,senzor.getId(),scale,MainActivity.this,this);
             }
             okno.addView(temp);
         }
@@ -159,5 +162,45 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        Log.i("onClick", String.valueOf(v.getTag()));
+        Intent intent;
+
+        //tag gumbov je id,OnOff za toggle buttn ali id,vec za gumb ki odpre nov activity
+        String str = v.getTag().toString();
+        String[] temp = str.split(",");
+        int id = Integer.valueOf(temp[0]);
+        String tip = temp[1];
+        if( tip.equals("OnOff")){
+            //mamo toggle button
+        }
+        else if(tip.equals("vec")){
+            //mamo gumb za vec opcij
+            if(id <0){
+                //gumb bil prtisnen na grupi
+                intent = new Intent(this,GroupViewActivity.class);
+                //nardimo nov bundle da loh not damo id grupe
+                Bundle bundle = new Bundle();
+                bundle.putInt("id",id);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                this.finish();
+            }
+            else{
+                //gumb prtisnen na senzorju
+                intent = new Intent(this,SensorViewActivity.class);
+                //nardimo nov bundle da loh not damo id senzorja
+                Bundle bundle = new Bundle();
+                bundle.putInt("id",id);
+                bundle.putInt("id_grupe",0);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                this.finish();
+            }
+        }
+
     }
 }
