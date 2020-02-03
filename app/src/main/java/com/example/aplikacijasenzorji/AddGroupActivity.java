@@ -22,6 +22,7 @@ import java.util.List;
 public class AddGroupActivity extends AppCompatActivity implements View.OnClickListener {
     EditText ime;
     String filename = "devices.txt";
+    String FILEPATH;
     Config config = new Config();
     Grupa grupa = new Grupa();
 
@@ -29,7 +30,8 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group);
-        config.getConfigurationValue(this.getFilesDir() +"/"+filename);
+        FILEPATH = this.getFilesDir() +"/"+filename;
+        config.getConfigurationValue(FILEPATH);
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +72,7 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
                 config.addVrstni_red(grupa.getId());
                 Log.d("config_class", String.valueOf(config.getVrstni_red()));
                 config.addGrupe(grupa);
-                config.writeConfigurationsValues(this.getFilesDir() +"/"+filename);
+                config.writeConfigurationsValues(FILEPATH);
 
                 //gremo nazaj na main activity
                 Intent refresh = new Intent(this, MainActivity.class);

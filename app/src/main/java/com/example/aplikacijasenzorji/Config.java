@@ -68,6 +68,10 @@ public final class Config{
                 tag = "Grupa"+String.valueOf(i)+"_stevilo_senzorjev";
                 prop.setProperty(tag, String.valueOf(grupa.getStevilo_senzorjev()));
 
+                //barva grupe
+                tag = "Grupa"+String.valueOf(i)+"_barva";
+                prop.setProperty(tag, String.valueOf(grupa.getBarva()));
+
                 //id grupe
                 tag = "Grupa"+String.valueOf(i)+"_id";
                 prop.setProperty(tag, String.valueOf(grupa.getId()));
@@ -242,6 +246,11 @@ public final class Config{
                 tag = "Grupa"+String.valueOf(i)+"_id";
                 value = prop.getProperty(tag);
                 grupa.setId(Integer.parseInt(value));
+
+                //barva grupe
+                tag = "Grupa"+String.valueOf(i)+"_barva";
+                value = prop.getProperty(tag);
+                grupa.setBarva(Integer.parseInt(value));
 
                 tag = "Grupa"+String.valueOf(i)+"_stevilo_senzorjev";
                 value = prop.getProperty(tag);

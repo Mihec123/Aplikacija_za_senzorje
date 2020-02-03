@@ -32,6 +32,7 @@ public class AddSenzorActivity extends AppCompatActivity implements View.OnClick
     EditText dolzina; //stevilo senzorjev
     CheckBox vlaga;
     String filename = "devices.txt";
+    String FILEPATH;
     Config config = new Config();
     Senzor senzor = new Senzor();
 
@@ -40,7 +41,8 @@ public class AddSenzorActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_senzor);
 
-        config.getConfigurationValue(this.getFilesDir() +"/"+filename);
+        FILEPATH = this.getFilesDir() +"/"+filename;
+        config.getConfigurationValue(FILEPATH);
 
 
 
@@ -101,7 +103,7 @@ public class AddSenzorActivity extends AppCompatActivity implements View.OnClick
                     //shranimo config file
                     config.addVrstni_red(senzor.getId());
                     config.addSenzorji(senzor);
-                    config.writeConfigurationsValues(this.getFilesDir() +"/"+filename);
+                    config.writeConfigurationsValues(FILEPATH);
 
                     //gremo nazaj na main activity
                     Intent refresh = new Intent(this, MainActivity.class);
@@ -130,14 +132,14 @@ public class AddSenzorActivity extends AppCompatActivity implements View.OnClick
         }
         else if (str.equals("1")) {
             //preverimo povezavo
-            senzor.setIp(String.valueOf(ip.getText()));
-            senzor.setPrikazi_vlago(vlaga.isChecked());
-            senzor.setStevilo_podsenzorjev(Integer.parseInt(String.valueOf(dolzina.getText())));
-            senzor.setZeton(String.valueOf(token.getText()));
-            senzor.setIme(String.valueOf(ime.getText()));
-            senzor.setId(smallestMissingUnsorted(config.getIdSenzor()));
+            Senzor temp_senzor = new Senzor();
+            temp_senzor.setIp(String.valueOf(ip.getText()));
+            temp_senzor.setPrikazi_vlago(vlaga.isChecked());
+            temp_senzor.setStevilo_podsenzorjev(Integer.parseInt(String.valueOf(dolzina.getText())));
+            temp_senzor.setZeton(String.valueOf(token.getText()));
+            temp_senzor.setIme(String.valueOf(ime.getText()));
 
-            boolean test = senzor.SensorCheckConnection();
+            boolean test = temp_senzor.SensorCheckConnection();
             if (test){
                 //uspel smo se povezat na senzor
                 Context context = getApplicationContext();

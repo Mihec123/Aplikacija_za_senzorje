@@ -14,6 +14,7 @@ import java.util.List;
 public class SortActivity extends AppCompatActivity {
 
     String filename = "devices.txt";
+    String FILEPATH;
     Config config = new Config();
     TreeNode main;
     TreeNode child;
@@ -30,7 +31,8 @@ public class SortActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sort);
         //nalozimo config ker neznam drgac spravt configa not k z branjem fila
-        config.getConfigurationValue(this.getFilesDir() +"/"+filename);
+        FILEPATH = this.getFilesDir() +"/"+filename;
+        config.getConfigurationValue(FILEPATH);
 
 
         //pripravmo drevo
@@ -189,7 +191,7 @@ public class SortActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if(sprememba) {
-                config.writeConfigurationsValues(this.getFilesDir() + "/" + filename);
+                config.writeConfigurationsValues(FILEPATH);
             }
             Intent refresh = new Intent(this, MainActivity.class);
             startActivity(refresh);

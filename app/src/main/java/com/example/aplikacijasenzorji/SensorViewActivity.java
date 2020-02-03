@@ -35,6 +35,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
     Senzor senzor;
     LinearLayout lin; //layout v katerga bomo dajal notr senzorje in vlago
     float scale;
+    String FILEPATH;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +49,11 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
 
         Bundle bundle = getIntent().getExtras();
         id_senzorja = bundle.getInt("id");
-        id_grupe = bundle.getInt("id_grupe");
+        id_grupe = bundle.getInt("id_grupe");//ce nismo v grupi bo id 0
         Log.d("test",String.valueOf(id_grupe));
 
-        config.getConfigurationValue(this.getFilesDir() +"/"+filename);
+        FILEPATH = this.getFilesDir() +"/"+filename;
+        config.getConfigurationValue(FILEPATH);
         senzor = config.getSenzorji().get(config.getIdSenzor().indexOf(id_senzorja));
 
 
@@ -237,8 +239,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
         String tag = String.valueOf(view.getTag());
         if (tag.equals("0")){
             //smo prtisnl gumb brisi
-            int id = isInGroup();
-            if(id == 0){
+            if(id_grupe == 0){
                 //zbrisat mormo samo iz configa vrsntni red
                 //nardimo dialog ce je odgovor ja zbrisemo sicer ignoriramo klik
                 AlertDialog.Builder alert = new AlertDialog.Builder(SensorViewActivity.this);
@@ -250,7 +251,8 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
                     public void onClick(DialogInterface dialog, int which) {
 
                         config.getVrstni_red().remove(config.getVrstni_red().indexOf(id_senzorja));
-                        config.writeConfigurationsValues(getFilesDir() +"/"+filename);
+                        config.getSenzorji().remove(config.getIdSenzor().indexOf(id_senzorja));
+                        config.writeConfigurationsValues(FILEPATH);
 
                         //vrnemo se na main activity
                         Intent refresh = new Intent(SensorViewActivity.this, MainActivity.class);
@@ -271,10 +273,54 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
 
                 alert.show();
             }
+            else if(id_grupe <0){
+                //smo v eni grupi z idjom id
+                //zbrisat mormo senzor iz grupe
+                //nardimo dialog ce je odgovor ja zbrisemo sicer ignoriramo klik
+                AlertDialog.Builder alert = new AlertDialog.Builder(SensorViewActivity.this);
+                alert.setTitle(getString(R.string.delete));
+                alert.setMessage(getString(R.string.vprasanje));
+                alert.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Grupa grupa = config.getGrupe().get(config.getIdGrup().indexOf(id_grupe));
+                        grupa.removeSenzorId(id_senzorja);
+                        config.getSenzorji().remove(config.getIdSenzor().indexOf(id_senzorja));
+                        config.writeConfigurationsValues(FILEPATH);
+
+                        //vrnemo se na activity grupe
+                        Intent refresh = new Intent(SensorViewActivity.this, GroupViewActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("id",id_grupe);
+                        refresh.putExtras(bundle);
+                        startActivity(refresh);
+                        SensorViewActivity.this.finish();
+
+                        dialog.dismiss();
+
+                    }
+                });
+                alert.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.show();
+            }
         }
         else if(tag.equals("1")){
             //smo prtisnl gumb edit
-            //se ni sprogramiran
+            Intent refresh = new Intent(SensorViewActivity.this, EditSenzorActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt("id",id_senzorja);
+            refresh.putExtras(bundle);
+            startActivity(refresh);
+            SensorViewActivity.this.finish();
         }
 
     }

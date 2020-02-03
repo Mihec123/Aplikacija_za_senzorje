@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.media.Image;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -66,6 +67,7 @@ public class Gumb_Creation {
         //creating the colored rim of button
         View v = new View(context);
         v.setId(View.generateViewId());
+        v.setTag("barva");
 
         //uporabimo prejsno spremenljivko za parametre in jo povozimo
         lp = new RelativeLayout.LayoutParams(
@@ -221,6 +223,7 @@ public class Gumb_Creation {
         lp.setMargins(0,dp5,dp10,dp5);
 
         OnOff.setLayoutParams(lp);
+        OnOff.setOnClickListener(listener);
         rl.addView(OnOff);
 
 
@@ -230,6 +233,7 @@ public class Gumb_Creation {
 
         Button vec_opcij = new Button(context);
         vec_opcij.setTag(String.valueOf(id)+",vec");
+        vec_opcij.setId(View.generateViewId());
 
         lp = new RelativeLayout.LayoutParams(
                 dp40,
@@ -246,6 +250,51 @@ public class Gumb_Creation {
         rl.addView(vec_opcij);
 
         ///////////////////////////////////////////////////////////////////////////////////////////
+        //dodamo image view ki kaze a smo online al offline
+        ImageView status = new ImageView(context);
+        status.setTag("status");
+        status.setBackgroundResource(R.drawable.ic_signal_wifi_off_black_24dp);
+        lp = new RelativeLayout.LayoutParams(
+                dp40,
+                dp40 );
+        //lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
+        //lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
+        lp.addRule(RelativeLayout.LEFT_OF,vec_opcij.getId());
+
+        lp.setMargins(0,dp20,dp5,0);
+
+        status.setLayoutParams(lp);
+        rl.addView(status);
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+
+        //dodamo okno ki kaze temperaturo senzorja
+
+        TextView temperatura = new TextView(context);
+        temperatura.setId(View.generateViewId());
+        temperatura.setTag("temp");
+        temperatura.setText("/");
+
+        temperatura.setTextColor(Color.GREEN);
+        temperatura.setTextSize(dp5);
+        temperatura.setBackgroundResource(R.drawable.techframe_medium);
+        temperatura.setGravity(Gravity.CENTER);
+
+        typeface = ResourcesCompat.getFont(context, R.font.clock_font);
+        temperatura.setTypeface(typeface);
+
+
+        lp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT );
+        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        lp.addRule(RelativeLayout.ALIGN_LEFT,im_forground.getId());
+        lp.addRule(RelativeLayout.ALIGN_TOP,ime.getId());
+        lp.setMargins(dp20,dp40,0,0);
+
+        temperatura.setLayoutParams(lp);
+        rl.addView(temperatura);
+        /////////////////////////////////////////////////////////////////////////////////////////
 
         return rl;
     }
@@ -301,6 +350,7 @@ public class Gumb_Creation {
         //creating the colored rim of button
         View v = new View(context);
         v.setId(View.generateViewId());
+        v.setTag("barva");
 
         //uporabimo prejsno spremenljivko za parametre in jo povozimo
         lp = new RelativeLayout.LayoutParams(

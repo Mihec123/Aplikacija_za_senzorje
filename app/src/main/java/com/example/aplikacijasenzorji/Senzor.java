@@ -2,6 +2,7 @@ package com.example.aplikacijasenzorji;
 
 import android.graphics.Color;
 import android.util.Log;
+import android.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,6 +29,9 @@ public class Senzor {
     private boolean vsaj_ena_temeratura = false;
     private float SLABATEMP = -99999;
     private List<String> imena_temperaturnih_senzorjev = new ArrayList<>();
+    private float temperatura_prvi;
+    private boolean online = false;
+    private boolean prizgan = false;
 
 
 
@@ -135,6 +139,167 @@ public class Senzor {
         }
     };
 
+    private Runnable runnableCheckFirstTemperature = new Runnable(){
+        /*
+        Opis:
+        naredimo nov objekt Runnable, ki ga potem lahko poklicemo v novem threadu
+        runnableCheckTemperature vzame ip, zeton in stevilo_podsenzorjev ter nastavi dobljene temperature, na to kar dobi glede na te podatke
+        Vhod:/
+        Izhod:/
+        */
+        public void run() {
+                String url;
+                if(stevilo_podsenzorjev == 1){
+                    url = "http://" + ip + "/api/temperature?apikey=" + zeton;
+                }
+                else {
+                    url = "http://" + ip + "/api/temperature/1?apikey=" + zeton;
+                }
+                Log.d("INTERNET", url);
+                try {
+                    HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                    responseCode = connection.getResponseCode();
+                    InputStream inputStream;
+                    if(responseCode == 200) {
+                        inputStream = connection.getInputStream();
+                        BufferedReader in = new BufferedReader(
+                                new InputStreamReader(
+                                        inputStream));
+
+                        StringBuilder response = new StringBuilder();
+                        String currentLine;
+
+                        while ((currentLine = in.readLine()) != null)
+                            response.append(currentLine);
+                        Log.d("INTERNET", "temperatura: " + String.valueOf(response));
+
+                        in.close();
+                        temperatura_prvi = Float.valueOf(String.valueOf(response));
+                    }
+                    else{
+                        temperatura_prvi = SLABATEMP;
+                    }
+                    connection.disconnect();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+    };
+
+    private Runnable runnableGetOnline = new Runnable(){
+        /*
+        Opis:
+        naredimo nov objekt Runnable, ki ga potem lahko poklicemo v novem threadu
+        runnableCheckTemperature vzame ip, zeton in stevilo_podsenzorjev ter nastavi dobljene temperature, na to kar dobi glede na te podatke
+        Vhod:/
+        Izhod:/
+        */
+        public void run() {
+            String url = "http://" + ip + "/api/relay/0?apikey=" + zeton;
+            Log.d("INTERNET", url);
+            try {
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                responseCode = connection.getResponseCode();
+                InputStream inputStream;
+                if(responseCode == 200) {
+                    inputStream = connection.getInputStream();
+                    BufferedReader in = new BufferedReader(
+                            new InputStreamReader(
+                                    inputStream));
+
+                    StringBuilder response = new StringBuilder();
+                    String currentLine;
+
+                    while ((currentLine = in.readLine()) != null)
+                        response.append(currentLine);
+                    Log.d("INTERNET", "temperatura: " + String.valueOf(response));
+
+                    in.close();
+                    online = true;
+                    prizgan = StringtoBool(String.valueOf(response));
+                }
+                else{
+                    online = false;
+                    prizgan = false;
+                }
+                connection.disconnect();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    public boolean SenzorPrizgiUgasni(boolean prizgi){
+
+        String url;
+        if (prizgi) {
+            url = "http://" + ip + "/api/relay/0?apikey=" + zeton + "&value=1";
+        }
+        else{
+            url = "http://" + ip + "/api/relay/0?apikey=" + zeton + "&value=0";
+        }
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            responseCode = connection.getResponseCode();
+            InputStream inputStream;
+            if(responseCode == 200) {
+                connection.disconnect();
+                return  true;
+            }
+            else{
+                connection.disconnect();
+                return false;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //se ni implementiran
+        return true;
+    }
+
+    public Pair<Boolean,Boolean> SenzorGetOnline(){
+        Pair<Boolean,Boolean> par;
+        Thread thread = new Thread(runnableGetOnline);
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if (online){
+            if(prizgan){
+                par = new Pair<>(true,true);
+            }
+            else{
+                par = new Pair<>(true,false);
+            }
+        }
+        else{
+            par = new Pair<>(false,false);
+        }
+        return par;
+    }
+
+    public float getFirstTemp(){
+        Thread thread = new Thread(runnableCheckFirstTemperature);
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if (temperatura_prvi == SLABATEMP) {
+            return SLABATEMP;
+        }
+        else {
+            return temperatura_prvi;
+        }
+    }
+
     public boolean SensorCheckTemerature(){
         /*
         Opis:
@@ -228,5 +393,16 @@ public class Senzor {
 
     public void addImena_temperaturnih_senzorjev(String ime) {
         this.imena_temperaturnih_senzorjev.add(ime);
+    }
+    public void setImena_temperaturnih_senzorjev(List<String> seznam){
+        this.imena_temperaturnih_senzorjev = seznam;
+    }
+    private Boolean StringtoBool(String s){
+        if(s.equals("1")){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }

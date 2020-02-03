@@ -19,8 +19,11 @@
     <string name="toast_prevec_senzorjev">Max number of sensors with humidity is 1</string>
     <string name="povezava_uspesna">Connection successful!</string>
     <string name="povezava_neuspesna">Connection failed!</string>
-    <string name="vprasanje">Do you want to delete this sensor from your list?</string>
+    <string name="vprasanje">Do you want to delete this sensor?</string>
     <string name="delete">Delete</string>
     <string name="yes">YES</string>
     <string name="no">NO</string>
+    <string name="vprasanje_brisanje_grupe">Deleting the group will also delete all sensors in the group. Do you want to delete the group?</string>
+    <string name="neuspesen_prizig_senzorja">Failed to turn on sensor </string>
+    <string name="neuspeseno_ugasanje_senzorja">Failed to turn off sensor </string>
 </resources>
