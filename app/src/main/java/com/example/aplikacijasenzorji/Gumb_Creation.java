@@ -204,13 +204,7 @@ public class Gumb_Creation {
 
 
         //ce mora biti senzor prizgan ga prizgemo ce je od grupe mamo vmesno stanje ce niso vsi prizgani ali ugasnjeni
-        if(prizgan){
-            OnOff.setChecked(true);
-            OnOff.setBackgroundResource(R.drawable.gumb_zelen);
-        }
-        else{
-            OnOff.setBackgroundResource(R.drawable.gumb);
-        }
+        OnOff.setBackgroundResource(R.drawable.gumb);
 
         lp = new RelativeLayout.LayoutParams(
                 dp90,
@@ -487,6 +481,8 @@ public class Gumb_Creation {
         typeface = ResourcesCompat.getFont(context, R.font.clock_font);
         stevec.setTypeface(typeface);
 
+        stevec.setTag("stevila");
+
 
         lp = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -516,17 +512,7 @@ public class Gumb_Creation {
 
 
         //ce mora biti senzor prizgan ga prizgemo ce je od grupe mamo vmesno stanje ce niso vsi prizgani ali ugasnjeni
-        if(prizgani_vsi_v_grupi){
-            OnOff.setChecked(true);
-            OnOff.setBackgroundResource(R.drawable.gumb_zelen);
-        }
-        else if(prizgan_noben){
-            OnOff.setBackgroundResource(R.drawable.gumb);
-        }
-        else {
-            OnOff.setBackgroundResource(R.drawable.gumb_moder);
-        }
-
+        OnOff.setBackgroundResource(R.drawable.gumb);
         lp = new RelativeLayout.LayoutParams(
                 dp90,
                 dp90 );
@@ -538,6 +524,7 @@ public class Gumb_Creation {
         lp.setMargins(0,dp10,dp10,dp10);
 
         OnOff.setLayoutParams(lp);
+        OnOff.setOnClickListener(listener);
         rl.addView(OnOff);
 
 
@@ -563,6 +550,23 @@ public class Gumb_Creation {
         rl.addView(vec_opcij);
 
         ///////////////////////////////////////////////////////////////////////////////////////////
+        //dodamo image view ki kaze a smo online al offline
+        ImageView status = new ImageView(context);
+        status.setTag("status");
+        status.setBackgroundResource(R.drawable.ic_signal_wifi_off_black_24dp);
+        lp = new RelativeLayout.LayoutParams(
+                dp40,
+                dp40 );
+        //lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
+        //lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
+        lp.addRule(RelativeLayout.LEFT_OF,vec_opcij.getId());
+
+        lp.setMargins(0,dp20,dp5,0);
+
+        status.setLayoutParams(lp);
+        rl.addView(status);
+
+        //////////////////////////////////////////////////////////////////////////////////////////
 
         return rl;
     }

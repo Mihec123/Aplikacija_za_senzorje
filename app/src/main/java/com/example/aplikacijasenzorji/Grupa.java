@@ -13,6 +13,8 @@ public class Grupa {
     private int id;
     private String ime;
     private int barva = Color.GREEN;
+    private int stevilo_prizganih = 0;
+    private int stevilo_online = 0;
 
 
     public Senzor findSenzorById(int id){

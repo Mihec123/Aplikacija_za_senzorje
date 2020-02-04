@@ -246,9 +246,23 @@ public class Senzor {
             InputStream inputStream;
             if(responseCode == 200) {
                 connection.disconnect();
+                //se pravilno nastavimo vrednost prizgan
+                if(prizgi){
+                    prizgan = true;
+                }
+                else{
+                    prizgan = false;
+                }
                 return  true;
             }
             else{
+                //pravilno nastavimo vrednost prizgan
+                if(prizgi){
+                    prizgan=false;
+                }
+                else{
+                    prizgan = true;
+                }
                 connection.disconnect();
                 return false;
             }
@@ -404,5 +418,8 @@ public class Senzor {
         else{
             return false;
         }
+    }
+    public boolean getPrizgan(){
+        return prizgan;
     }
 }

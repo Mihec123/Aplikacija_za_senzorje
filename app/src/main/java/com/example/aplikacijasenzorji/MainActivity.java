@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private List<Integer> CommandBufferList = new ArrayList<>(); //ce je 0 ni nc, ce je -n je n krat probal dt komando
     private List<Integer> StatusBufferList = new ArrayList<>(); //ce je 0 se ni bil online, ce je 1 je online, ce je n n-1 zaporednih ni bil online
     private List<Integer> CommandList = new ArrayList<>(); // komande a hocmo ugasn al ne 0 ni komande na bufferju, -1 hocmo ugasnt, 1 hocmo przgt
+    private List<Integer> CommandListGrupa = new ArrayList<>(); // komande a hocmo ugasn al ne vse elemente v grupi 0 ni komande na bufferju, -1 hocmo ugasnt, 1 hocmo przgt
+    private List<Integer> CommandBufferListGrupa = new ArrayList<>(); //ce je 0 ni nc, ce je -n je n krat probal dt komando grupi
     private int BUFFER = 3;
     private List <RelativeLayout> gumbi_oblika = new ArrayList<>(); //sem bomo shranjevali toggle butne da jim bomo lahko menjal ozadja
     private float SLABATEMP = -99999;
@@ -116,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             CommandList.add(0);
 
         }
+
         //zacnemo while zanko za pregled senzorjev in grup
         run_main();
 
@@ -127,12 +130,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d("run_del", String.valueOf(CommandBufferList));
                 Log.d("run_del", String.valueOf(CommandList));
                 Log.d("run_del", String.valueOf(StatusBufferList));
-                for (int id : config.getVrstni_red()) {
-                    if (id < 0) {
-                        Log.d("run_del", "grupa: " + String.valueOf(id));
-                        //grupa
-                    } else {
-                        //senzor
+                Log.i("run_del", "zacel zanko");
+                for(int id : config.getIdSenzor()) {
+                    //senzor
+                    if (config.getVrstni_red().contains(id)){
+                        //senzor je na glavnem screenu, mormo barvat pa popravljat gumbe
                         int index = config.getIdSenzor().indexOf(id);
                         final Senzor sen = config.getSenzorji().get(index);
                         Pair<Boolean, Boolean> online = sen.SenzorGetOnline();
@@ -355,10 +357,240 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             }
                         }
+                    }
+                    else{
+                        int index = config.getIdSenzor().indexOf(id);
+                        final Senzor sen = config.getSenzorji().get(index);
+                        Pair<Boolean, Boolean> online = sen.SenzorGetOnline();
+                        if (online.first.equals(true)) {
+                            Log.d("run_del", "senzor: " + String.valueOf(id) + " je online");
+                            //smo online
+                            StatusBufferList.set(index, 1);
+                            //pogledamo ce mormo przgat ali ugasnt senzor
+                            if (CommandList.get(index) == 1 && online.second.equals(false)) {
+                                Log.d("run_del", "hocmo prizgat, ni prizgan");
+                                //hocmo przgat senozor, trenutno je ugasnen
+                                boolean uspeli = sen.SenzorPrizgiUgasni(true);
+                                if (uspeli) {
+                                    //uspesno smo izvedli prizig
+                                    CommandBufferList.set(index, 0);
+                                    //popravmo da ne rabmo vec przgat
+                                    CommandList.set(index, 0);
+
+                                } else if (CommandBufferList.get(index) < BUFFER) {
+                                    //nismo uspel prizgat ampak se bomo poskusal
+                                    CommandBufferList.set(index, CommandBufferList.get(index) + 1);
+                                } else {
+                                    //obupamo in vrnemo toast da nismo uspel prizgat senozrja
+                                    //popravimo bufferlist na 0
+                                    CommandBufferList.set(index, 0);
+                                    //popravimo comande na 0
+                                    CommandList.set(index, 0);
+                                    CharSequence text = getString(R.string.neuspesen_prizig_senzorja) + sen.getIme();
+                                    int duration = Toast.LENGTH_SHORT;
+
+                                    Toast toast = Toast.makeText(MainActivity.this, text, duration);
+                                    toast.show();
+                                }
+
+                            } else if (CommandList.get(index) == -1 && online.second.equals(true)) {
+                                //hocmo ugasnit senozor, je trenutno przgan
+                                Log.d("run_del", "hocmo ugasnt, je prizgan");
+                                boolean uspeli = sen.SenzorPrizgiUgasni(false);
+                                if (uspeli) {
+                                    //uspesno smo ugasnili
+                                    CommandBufferList.set(index, 0);
+                                    CommandList.set(index, 0);
+                                    //spremenimo barvo gumba
+
+                                } else if (CommandBufferList.get(index) < BUFFER) {
+                                    //nismo uspel ugasnt ampak se bomo poskusal
+                                    CommandBufferList.set(index, CommandBufferList.get(index) + 1);
+                                } else {
+                                    //obupamo in vrnemo toast da nismo uspel prizgat senozrja
+                                    //popravimo bufferlist na 0
+                                    CommandBufferList.set(index, 0);
+                                    CommandList.set(index, 0);
+                                    CharSequence text = getString(R.string.neuspeseno_ugasanje_senzorja) + sen.getIme();
+                                    int duration = Toast.LENGTH_SHORT;
+
+                                    Toast toast = Toast.makeText(MainActivity.this, text, duration);
+                                    toast.show();
+                                }
+                            } else if (CommandList.get(index) == -1 && online.second.equals(false)) {
+                                //hocmo ugasnt senzor, pa je ze ugasnen
+                                Log.d("run_del", "hocmo ugasnt, ni prizgan");
+
+                                //pocistt mormo samo buffer
+                                //pocistmo buffer
+                                CommandBufferList.set(index, 0);
+                                //popravmo da ne rabmo vec ugasnt
+                                CommandList.set(index, 0);
+                            } else if (CommandList.get(index) == 1 && online.second.equals(true)) {
+                                //hocmo przgat senzor, pa je ze przgan
+                                Log.d("run_del", "hocmo prizgat, je prizgan");
+
+                                //pocistmo buffer
+                                CommandBufferList.set(index, 0);
+                                //popravmo da ne rabmo vec przgat
+                                CommandList.set(index, 0);
+
+                            } else {
+                                //nocmo nardit nc, torej samo nastavmo pravo barvo gumba
+
+                            }
+                        }
+                        else {
+                            Log.d("run_del", "senzor: " + String.valueOf(id) + " ni online");
+                            //nismo online
+                            //pogledamo ce smo prej bli online pa je sam lag potem ohranmo status online
+                            int vrednost_status_buffer = StatusBufferList.get(index);
+                            if (vrednost_status_buffer < BUFFER && vrednost_status_buffer > 0) {
+                                //bli smo online
+                                //povecamo buffer za +1 in pustimo online status
+                                StatusBufferList.set(index, vrednost_status_buffer + 1);
+
+                                //ce mormo kej nardit z switchom se vseeno probamo nardit
+                                if (CommandList.get(index) == 1) {
+                                    //hocmo przgat senozor
+                                    boolean uspeli = sen.SenzorPrizgiUgasni(true);
+                                    if (uspeli) {
+                                        //uspesno smo izvedli prizig
+                                        CommandBufferList.set(index, 0);
+                                        //ne rabmo vec przgat
+                                        CommandList.set(index, 0);
+
+                                    } else if (CommandBufferList.get(index) < BUFFER) {
+                                        //nismo uspel prizgat ampak se bomo poskusal
+                                        CommandBufferList.set(index, CommandBufferList.get(index) + 1);
+                                    } else {
+                                        //obupamo in vrnemo toast da nismo uspel prizgat senozrja
+                                        //popravimo bufferlist na 0
+                                        CommandBufferList.set(index, 0);
+                                        //ker smo obupal popucamo buffer
+                                        CommandList.set(index, 0);
+                                        CharSequence text = getString(R.string.neuspesen_prizig_senzorja) + sen.getIme();
+                                        int duration = Toast.LENGTH_SHORT;
+
+                                        Toast toast = Toast.makeText(MainActivity.this, text, duration);
+                                        toast.show();
+                                    }
+                                } else if (CommandList.get(index) == -1) {
+                                    //hocmo ugasnit senozor
+                                    boolean uspeli = sen.SenzorPrizgiUgasni(false);
+                                    if (uspeli) {
+                                        //uspesno smo ugasnili
+                                        CommandBufferList.set(index, 0);
+                                        CommandList.set(index, 0);
+
+                                    } else if (CommandBufferList.get(index) < BUFFER) {
+                                        //nismo uspel ugasnt ampak se bomo poskusal
+                                        CommandBufferList.set(index, CommandBufferList.get(index) + 1);
+                                    } else {
+                                        //obupamo in vrnemo toast da nismo uspel prizgat senozrja
+                                        //popravimo bufferlist na 0
+                                        CommandBufferList.set(index, 0);
+                                        CommandList.set(index, 0);
+                                        CharSequence text = getString(R.string.neuspeseno_ugasanje_senzorja) + sen.getIme();
+                                        int duration = Toast.LENGTH_SHORT;
+
+                                        Toast toast = Toast.makeText(MainActivity.this, text, duration);
+                                        toast.show();
+                                    }
+                                } else {
+                                    //nocmo nc nardit nas ne zanima
+                                }
+
+                            } else if (vrednost_status_buffer == BUFFER) {
+                                //bli ofline tokrat da recemo da smo ofline
+                                StatusBufferList.set(index, 0);
+                                CommandList.set(index, 0);//popravmo se comande buffrje na default
+                                CommandBufferList.set(index, 0);
+
+                            } else {
+                                //nismo bli online pustimo pri meru
+
+                            }
+                        }
+                    }
+                }
+                for(int id:config.getIdGrup()){
+                    Log.d("run_del", "grupa: " + String.valueOf(id));
+                    //grupa
+                    int index = config.getIdGrup().indexOf(id);
+                    final Grupa grupa = config.getGrupe().get(index);
+                    //pogledamo koliko senzorjev v grupi je online ter pogledamo koliko senzorjev v grupi je prizganih
+                    int st_online = 0;
+                    int st_prizganih = 0;
+                    for (Senzor sen: grupa.getSenzorji()){
+                        int index_senzorja = config.getSenzorji().indexOf(sen);
+                        if(StatusBufferList.get(index_senzorja) > 0 && StatusBufferList.get(index_senzorja) < BUFFER){
+                            //ce je 1 online, ce je manjsi od buferja ga se smatramo da je online
+                            st_online += 1;
+                        }
+                        if(sen.getPrizgan()){
+                            st_prizganih += 1;
+                        }
+                    }
+
+                    if(st_online >0){
+                        //recemo da je grupa online
+                        ImageView temp_image = gumbi_oblika.get(config.getVrstni_red().indexOf(id)).findViewWithTag("status");
+                        temp_image.setBackgroundResource(R.drawable.ic_wifi_black_24dp);
+                        //pobarvamo grupo
+                        View view = gumbi_oblika.get(config.getVrstni_red().indexOf(id)).findViewWithTag("barva");
+                        view.setBackground(create_gd(grupa.getBarva()));
+                        if(st_prizganih == 0){
+                            Log.d("run_del", "grupa: " + String.valueOf(id) + " st_ptizganih je 0");
+                            //pobarvamo gumb na sivo in nastavimo toggle button na off
+                            ToggleButton temp_toggle = gumbi_oblika.get(config.getVrstni_red().indexOf(id)).findViewWithTag(String.valueOf(id) + ",onoff");
+                            temp_toggle.setChecked(false);
+                            temp_toggle.setBackgroundResource(R.drawable.gumb);
+                        }
+                        else if(st_prizganih == grupa.getStevilo_senzorjev() && grupa.getStevilo_senzorjev() != 0){
+                            //pobarvamo gumb na zeleno in nastavimo toggle button na on
+                            ToggleButton temp_toggle = gumbi_oblika.get(config.getVrstni_red().indexOf(id)).findViewWithTag(String.valueOf(id) + ",onoff");
+                            temp_toggle.setChecked(true);
+                            temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
+                        }
+                        else if(st_prizganih>0 && grupa.getStevilo_senzorjev() != 0){
+                            //pobarvamo senzor na modro in nastavimo toggle button na on
+                            ToggleButton temp_toggle = gumbi_oblika.get(config.getVrstni_red().indexOf(id)).findViewWithTag(String.valueOf(id) + ",onoff");
+                            temp_toggle.setChecked(true);
+                            temp_toggle.setBackgroundResource(R.drawable.gumb_moder);
+                        }
+                    }
+                    else {
+                        //recemo da je grupa offline
+                        ImageView temp_image = gumbi_oblika.get(config.getVrstni_red().indexOf(id)).findViewWithTag("status");
+                        temp_image.setBackgroundResource(R.drawable.ic_signal_wifi_off_black_24dp);
+                        //pobarvamo grupo
+                        View view = gumbi_oblika.get(config.getVrstni_red().indexOf(id)).findViewWithTag("barva");
+                        view.setBackground(create_gd(Color.GRAY));
+                        //recemo da ni noben prizgan ker ne vemo
+                        st_prizganih = 0;
+
+                        ToggleButton temp_toggle = gumbi_oblika.get(config.getVrstni_red().indexOf(id)).findViewWithTag(String.valueOf(id) + ",onoff");
+                        temp_toggle.setChecked(false);
+                        temp_toggle.setBackgroundResource(R.drawable.gumb);
+
 
                     }
 
+                    //damo napise na grupo
+                    final String opis_grupe = "#: " + String.valueOf(grupa.getStevilo_senzorjev()) + ", Online: " + String.valueOf(st_online) + ", On: " + String.valueOf(st_prizganih);
+
+                    final TextView text_grupe = gumbi_oblika.get(config.getVrstni_red().indexOf(id)).findViewWithTag("stevila");
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            text_grupe.setText(opis_grupe);
+                        }
+                    });
+
+
                 }
+                Log.i("run_del", "koncal zanko");
                 SystemClock.sleep(2000);
 
             }
@@ -492,8 +724,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ToggleButton gumb_onoff = (ToggleButton) v;
             boolean stanje = gumb_onoff.isChecked();
             if(stanje){
-                //poklici metodo za prizgat
-                Log.d("run_del","prizgi");
+                //poklici metodo za prizgat ker se je ob pritisku gumba iz off spremenilo na on in smo sedaj v on
+                Log.i("onClick", "prizgi");
                 if(id >0){
                     //senzor
                     //damo na buffer
@@ -503,11 +735,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else{
                     //grupa
+                    Log.i("run_del", "prizgi grupo");
+                    Grupa grupa = config.getGrupe().get(config.getIdGrup().indexOf(id));
+                    int index;
+                    for(Senzor sen:grupa.getSenzorji()){
+                        Log.i("onClick", String.valueOf(sen));
+                        index = config.getIdSenzor().indexOf(sen.getId());
+                        CommandList.set(index,1);
+                    }
+                    Log.i("onClick", String.valueOf(CommandList));
+                    Log.i("run_del", "prizgi grupo koncal");
                 }
             }
             else{
                 //poklici metodo za ugasnt
-                Log.d("run_del","ugasni");
+                Log.i("onClick", "ugasni");
                 if(id >0){
                     //senzor
                     int index = config.getIdSenzor().indexOf(id);
@@ -515,6 +757,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else{
                     //grupa
+                    Log.i("run_del", "ugasni grupo");
+                    Grupa grupa = config.getGrupe().get(config.getIdGrup().indexOf(id));
+                    int index;
+                    for(Senzor sen:grupa.getSenzorji()){
+                        index = config.getIdSenzor().indexOf(sen.getId());
+                        CommandList.set(index,-1);
+                    }
+                    Log.i("onClick", String.valueOf(CommandList));
+                    Log.i("run_del", "ugasni grupo koncal");
                 }
             }
         }
