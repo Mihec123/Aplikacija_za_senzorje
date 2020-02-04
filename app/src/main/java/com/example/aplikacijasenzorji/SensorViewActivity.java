@@ -7,11 +7,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -36,6 +40,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
     LinearLayout lin; //layout v katerga bomo dajal notr senzorje in vlago
     float scale;
     String FILEPATH;
+    private float SLABATEMP = -99999;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,16 +48,16 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_sensor_view);
 
         Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics outMetrics = new DisplayMetrics ();
+        DisplayMetrics outMetrics = new DisplayMetrics();
         display.getMetrics(outMetrics);
         scale = outMetrics.density;
 
         Bundle bundle = getIntent().getExtras();
         id_senzorja = bundle.getInt("id");
         id_grupe = bundle.getInt("id_grupe");//ce nismo v grupi bo id 0
-        Log.d("test",String.valueOf(id_grupe));
+        Log.d("test", String.valueOf(id_grupe));
 
-        FILEPATH = this.getFilesDir() +"/"+filename;
+        FILEPATH = this.getFilesDir() + "/" + filename;
         config.getConfigurationValue(FILEPATH);
         senzor = config.getSenzorji().get(config.getIdSenzor().indexOf(id_senzorja));
 
@@ -63,7 +68,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
         brisi.setOnClickListener(SensorViewActivity.this);
         brisi.setTag(0);
 
-        FloatingActionButton edit = (FloatingActionButton)  findViewById(R.id.fb_edit);
+        FloatingActionButton edit = (FloatingActionButton) findViewById(R.id.fb_edit);
         edit.setOnClickListener(SensorViewActivity.this);
         edit.setTag(1);
 
@@ -74,33 +79,34 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
 
         View barva = findViewById(R.id.barva);
         barva.setBackgroundColor(senzor.getBarva());
-        Log.d("onClick","prezvel barvo");
+        Log.d("onClick", "prezvel barvo");
 
         lin = findViewById(R.id.linear);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////
 
         //dodamo senzorje in pozenemo loop da popravlja vrednosti
-        if(senzor.isPrikazi_vlago()){
+        if (senzor.isPrikazi_vlago()) {
             //prikazat mormo vlago + mogoce en senzor
-            if(senzor.getStevilo_podsenzorjev() > 0){
+            if (senzor.getStevilo_podsenzorjev() > 0) {
                 //mamo vlago + en senzor
                 //ker je sam en senzor ga nastavmo na id 0
                 RelativeLayout temp = senzor_view(0);
                 lin.addView(temp);
-                //ker je sam en senzor za vlago ga nastavmo na id -1
-                temp = senzor_view_vlaga(-1);
+                //ker je sam en senzor za vlago ga nastavmo na id 1
+                temp = senzor_view_vlaga(1);
                 lin.addView(temp);
+                run_main2();
 
-            }
-            else{
+            } else {
                 //mamo samo vlago
-                //nastavmo id vlage na -1
-                RelativeLayout temp = senzor_view_vlaga(-1);
+                //nastavmo id vlage na 1
+                RelativeLayout temp = senzor_view_vlaga(1);
                 lin.addView(temp);
+                Log.d("senzor_main", "pozeni main3");
+                run_main3();
             }
-        }
-        else {
+        } else {
             //nimamo vlage imamo samo senzorje
             for (int i = 0; i < senzor.getStevilo_podsenzorjev(); i++) {
                 RelativeLayout temp = senzor_view(i);
@@ -109,17 +115,18 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
             //ker jih imamo lahko veliko dodamo na koncu se prazno vrstico da lahko scroolamo mal nizi
             View view = new View(this);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                    (int )(200 * scale + 0.5f), //60dp
-                    (int )(200 * scale + 0.5f) );//60dp
+                    (int) (200 * scale + 0.5f), //60dp
+                    (int) (200 * scale + 0.5f));//60dp
             view.setLayoutParams(lp);
             lin.addView(view);
+            run_main1();
         }
 
         //sprehajamo se cez senzorje in nastavljamo temperature ali vlago
 
     }
 
-    private RelativeLayout senzor_view(int id){
+    private RelativeLayout senzor_view(int id) {
 
         int dp40 = (int) (40 * scale + 0.5f);
         int dp5 = (int) (5 * scale + 0.5f);
@@ -134,11 +141,11 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
         //dolocmo parametre
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 dp40,
-                dp40 );
+                dp40);
         //omejitve postavljanja
         lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
         lp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        lp.setMargins(0,dp5,0,dp5);
+        lp.setMargins(0, dp5, 0, dp5);
 
         view.setLayoutParams(lp);
         okno.addView(view);
@@ -152,11 +159,11 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
         temperatura_senzorja.setText(senzor.getImena_temperaturnih_senzorjev().get(id) + ": " + getString(R.string.no_value));
         lp = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT );
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
         //omejitve postavljanja
         lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        lp.setMargins(0,dp5,0,dp5);
-        lp.addRule(RelativeLayout.BELOW,view.getId());
+        lp.setMargins(0, dp5, 0, dp5);
+        lp.addRule(RelativeLayout.BELOW, view.getId());
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         temperatura_senzorja.setLayoutParams(lp);
 
@@ -166,7 +173,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
         return okno;
     }
 
-    private RelativeLayout senzor_view_vlaga(int id){
+    private RelativeLayout senzor_view_vlaga(int id) {
 
         int dp40 = (int) (40 * scale + 0.5f);
         int dp5 = (int) (5 * scale + 0.5f);
@@ -181,11 +188,11 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
         //dolocmo parametre
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 dp40,
-                dp40 );
+                dp40);
         //omejitve postavljanja
         lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
         lp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        lp.setMargins(0,dp5,0,dp5);
+        lp.setMargins(0, dp5, 0, dp5);
 
         view.setLayoutParams(lp);
         okno.addView(view);
@@ -199,11 +206,11 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
         temperatura_senzorja.setText(getString(R.string.no_value));
         lp = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT );
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
         //omejitve postavljanja
         lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        lp.setMargins(0,dp5,0,dp5);
-        lp.addRule(RelativeLayout.BELOW,view.getId());
+        lp.setMargins(0, dp5, 0, dp5);
+        lp.addRule(RelativeLayout.BELOW, view.getId());
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         temperatura_senzorja.setLayoutParams(lp);
 
@@ -212,14 +219,140 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
         //////////////////////////////////////////////////////////////////////////////////////////
         return okno;
     }
-    
+
+    public void run_main3() {
+        //ce mamo samo senzorje brez vlage
+        Log.d("senzor_main", "zacetek main3");
+        Thread thread = new Thread(pozeni_check3);
+        thread.start();
+    }
+
+    private Runnable pozeni_check3 = new Runnable() {
+        public void run() {
+            while (true) {
+                SystemClock.sleep(2000);
+                Log.d("senzor_main", "zacetek3");
+
+                final Float vlaga = senzor.getVlaga();
+                Log.d("senzor_main", String.valueOf(vlaga));
+                SensorViewActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView text_grupe = lin.findViewById(1);
+                        Log.d("senzor_main", String.valueOf(text_grupe));
+                        if (vlaga != SLABATEMP) {
+                            text_grupe.setText(String.valueOf(vlaga));
+                        }
+                        else{
+                            text_grupe.setText(getString(R.string.no_value));
+                        }
+                    }
+                });
+
+
+                Log.d("senzor_main", "konec3");
+                SystemClock.sleep(2000);
+
+            }
+        }
+    };
+
+    public void run_main2() {
+        //ce mamo samo senzorje brez vlage
+        Thread thread = new Thread(pozeni_check2);
+        thread.start();
+    }
+
+    private Runnable pozeni_check2 = new Runnable() {
+        public void run() {
+            while (true) {
+                Log.d("senzor_main", "zacetek2");
+
+                senzor.SensorCheckTemerature();
+                Log.d("senzor_main", String.valueOf(senzor.getTemperatura()));
+                final Float temperatura = senzor.getTemperatura().get(0);
+                Log.d("senzor_main", "zacetek2");
+                final Float vlaga = senzor.getVlaga();
+                SensorViewActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView text_grupe = lin.findViewById(1);
+                        if (vlaga != SLABATEMP) {
+                            text_grupe.setText(String.valueOf(vlaga));
+                        }
+                        else{
+                            text_grupe.setText(getString(R.string.no_value));
+                        }
+
+                        if (temperatura != SLABATEMP) {
+                            text_grupe = lin.findViewById(0);
+                            text_grupe.setText(String.valueOf(temperatura));
+                        }
+                        else{
+                            text_grupe.setText(getString(R.string.no_value));
+                        }
+                    }
+                });
+
+
+                Log.d("senzor_main", "konec2");
+                SystemClock.sleep(2000);
+
+            }
+        }
+    };
+
+    public void run_main1() {
+        //ce mamo samo senzorje brez vlage
+        Thread thread = new Thread(pozeni_check1);
+        thread.start();
+    }
+
+    private Runnable pozeni_check1 = new Runnable() {
+        public void run() {
+            while (true) {
+                Log.d("senzor_main", "zacetek1");
+
+                senzor.SensorCheckTemerature();
+                SensorViewActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final List<Float> temperature = senzor.getTemperatura();
+                        Log.d("senzor_main", String.valueOf(temperature));
+                        for (int i = 0; i < senzor.getStevilo_podsenzorjev(); i++) {
+                            Log.d("senzor_main", String.valueOf(i));
+                            TextView text_grupe = lin.findViewById(i);
+                            Log.d("senzor_main", String.valueOf(text_grupe));
+                            if (temperature.get(i) != SLABATEMP) {
+                                Log.d("senzor_main", "nastavi text");
+                                text_grupe.setText(String.valueOf(temperature.get(i)));
+                                Log.d("senzor_main", "nastavl text");
+                            } else {
+                                Log.d("senzor_main", "nastavi text slab");
+                                text_grupe.setText(getString(R.string.no_value));
+                                Log.d("senzor_main", "nastavl text slab");
+                            }
+
+                        }
+
+                    }
+                });
+
+
+                Log.d("senzor_main", "konec1");
+                SystemClock.sleep(2000);
+
+            }
+        }
+    };
+
 
     @Override
     public void onClick(View view) {
         String tag = String.valueOf(view.getTag());
-        if (tag.equals("0")){
+        if (tag.equals("0")) {
             //smo prtisnl gumb brisi
-            if(id_grupe == 0){
+            if (id_grupe == 0) {
                 //zbrisat mormo samo iz configa vrsntni red
                 //nardimo dialog ce je odgovor ja zbrisemo sicer ignoriramo klik
                 AlertDialog.Builder alert = new AlertDialog.Builder(SensorViewActivity.this);
@@ -252,8 +385,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
                 });
 
                 alert.show();
-            }
-            else if(id_grupe <0){
+            } else if (id_grupe < 0) {
                 //smo v eni grupi z idjom id
                 //zbrisat mormo senzor iz grupe
                 //nardimo dialog ce je odgovor ja zbrisemo sicer ignoriramo klik
@@ -273,7 +405,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
                         //vrnemo se na activity grupe
                         Intent refresh = new Intent(SensorViewActivity.this, GroupViewActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putInt("id",id_grupe);
+                        bundle.putInt("id", id_grupe);
                         refresh.putExtras(bundle);
                         startActivity(refresh);
                         SensorViewActivity.this.finish();
@@ -292,12 +424,11 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
 
                 alert.show();
             }
-        }
-        else if(tag.equals("1")){
+        } else if (tag.equals("1")) {
             //smo prtisnl gumb edit
             Intent refresh = new Intent(SensorViewActivity.this, EditSenzorActivity.class);
             Bundle bundle = new Bundle();
-            bundle.putInt("id",id_senzorja);
+            bundle.putInt("id", id_senzorja);
             refresh.putExtras(bundle);
             startActivity(refresh);
             SensorViewActivity.this.finish();
@@ -308,17 +439,16 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        if(id_grupe == 0) {
+        if (id_grupe == 0) {
             //prsli iz main screena
             Intent refresh = new Intent(this, MainActivity.class);
             startActivity(refresh);
             this.finish();
-        }
-        else {
+        } else {
             //prsli iz neke grupe
             Intent refresh = new Intent(this, GroupViewActivity.class);
             Bundle bundle = new Bundle();
-            bundle.putInt("id",id_grupe);
+            bundle.putInt("id", id_grupe);
             refresh.putExtras(bundle);
             startActivity(refresh);
             this.finish();

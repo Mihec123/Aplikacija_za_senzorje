@@ -34,6 +34,7 @@ public class Senzor {
     private int CommandBuffer = 0; //ce je 0 ni nc, ce je n je n krat probal dt komando
     private int Command = 0; //komande a hocmo ugasn al ne 0 ni komande na bufferju, -1 hocmo ugasnt, 1 hocmo przgt
     private int TIMEOUT = 1000;
+    private float vlaga;
 
 
     private Runnable runnableCheckConnection = new Runnable() {
@@ -83,6 +84,7 @@ public class Senzor {
 
     }
 
+
     private Runnable runnableCheckTemperature = new Runnable() {
         /*
         Opis:
@@ -94,7 +96,7 @@ public class Senzor {
         public void run() {
             temperatura = new ArrayList<Float>();
             vsaj_ena_temeratura = false;
-            for (int i = 1; i <= stevilo_podsenzorjev; i++) {
+            for (int i = 0; i < stevilo_podsenzorjev; i++) {
 
                 String url;
                 if (stevilo_podsenzorjev == 1) {
@@ -102,6 +104,7 @@ public class Senzor {
                 } else {
                     url = "http://" + ip + "/api/temperature/" + String.valueOf(i) + "?apikey=" + zeton;
                 }
+                Log.d("INTERNET", ip);
                 Log.d("INTERNET", url);
                 try {
                     HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
@@ -127,9 +130,11 @@ public class Senzor {
                         temperatura.add(SLABATEMP);
                     }
                     connection.disconnect();
+                    Log.d("INTERNET", String.valueOf(temperatura));
 
                 } catch (IOException e) {
                     e.printStackTrace();
+                    temperatura.add(SLABATEMP);
                 }
             }
 
@@ -151,7 +156,7 @@ public class Senzor {
             } else {
                 url = "http://" + ip + "/api/temperature/1?apikey=" + zeton;
             }
-            Log.d("INTERNET", url);
+            //Log.d("INTERNET", url);
             try {
                 HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                 responseCode = connection.getResponseCode();
@@ -167,7 +172,7 @@ public class Senzor {
 
                     while ((currentLine = in.readLine()) != null)
                         response.append(currentLine);
-                    Log.d("INTERNET", "temperatura: " + String.valueOf(response));
+                    //Log.d("INTERNET", "temperatura: " + String.valueOf(response));
 
                     in.close();
                     temperatura_prvi = Float.valueOf(String.valueOf(response));
@@ -192,7 +197,7 @@ public class Senzor {
         */
         public void run() {
             String url = "http://" + ip + "/api/relay/0?apikey=" + zeton;
-            Log.d("INTERNET", url);
+            //Log.d("INTERNET", url);
             try {
                 HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                 responseCode = connection.getResponseCode();
@@ -208,7 +213,7 @@ public class Senzor {
 
                     while ((currentLine = in.readLine()) != null)
                         response.append(currentLine);
-                    Log.d("INTERNET", "temperatura: " + String.valueOf(response));
+                    //Log.d("INTERNET", "temperatura: " + String.valueOf(response));
 
                     in.close();
                     online = true;
@@ -216,6 +221,47 @@ public class Senzor {
                 } else {
                     online = false;
                     prizgan = false;
+                }
+                connection.disconnect();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private Runnable runnableCheckVlaga = new Runnable() {
+        /*
+        Opis:
+        naredimo nov objekt Runnable, ki ga potem lahko poklicemo v novem threadu
+        runnableCheckTemperature vzame ip, zeton in stevilo_podsenzorjev ter nastavi dobljene temperature, na to kar dobi glede na te podatke
+        Vhod:/
+        Izhod:/
+        */
+        public void run() {
+            String url = "http://" + ip + "/api/humidity?apikey=" + zeton;
+            //Log.d("INTERNET", url);
+            try {
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                responseCode = connection.getResponseCode();
+                InputStream inputStream;
+                if (responseCode == 200) {
+                    inputStream = connection.getInputStream();
+                    BufferedReader in = new BufferedReader(
+                            new InputStreamReader(
+                                    inputStream));
+
+                    StringBuilder response = new StringBuilder();
+                    String currentLine;
+
+                    while ((currentLine = in.readLine()) != null)
+                        response.append(currentLine);
+                    //Log.d("INTERNET", "temperatura: " + String.valueOf(response));
+
+                    in.close();
+                    vlaga = Float.valueOf(String.valueOf(response));
+                } else {
+                    vlaga = SLABATEMP;
                 }
                 connection.disconnect();
 
@@ -322,6 +368,19 @@ public class Senzor {
         } else {
             return false;
         }
+
+    }
+
+    public float getVlaga(){
+        Thread thread = new Thread(runnableCheckVlaga);
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            vlaga = SLABATEMP;
+        }
+        return vlaga;
 
     }
 
