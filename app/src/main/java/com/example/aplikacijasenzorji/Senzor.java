@@ -8,8 +8,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,10 +30,13 @@ public class Senzor {
     private float temperatura_prvi;
     private boolean online = false;
     private boolean prizgan = false;
+    private int StatusBuffer = 0; //ce je 0 se ni bil online, ce je 1 je online, ce je n n-1 zaporednih ni bil online
+    private int CommandBuffer = 0; //ce je 0 ni nc, ce je n je n krat probal dt komando
+    private int Command = 0; //komande a hocmo ugasn al ne 0 ni komande na bufferju, -1 hocmo ugasnt, 1 hocmo przgt
+    private int TIMEOUT = 1000;
 
 
-
-    private Runnable runnableCheckConnection = new Runnable(){
+    private Runnable runnableCheckConnection = new Runnable() {
         /*
         Opis:
         naredimo nov objekt Runnable, ki ga potem lahko poklicemo v novem threadu
@@ -49,8 +50,7 @@ public class Senzor {
                 HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                 responseCode = connection.getResponseCode();
                 connection.disconnect();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
@@ -58,7 +58,7 @@ public class Senzor {
     };
 
 
-    public boolean SensorCheckConnection(){
+    public boolean SensorCheckConnection() {
         /*
         Opis:
         Funkcija SensorCheckConnection pozene runnableCheckConnection na novem threadu, ter pocaka da se zakljuci
@@ -77,14 +77,13 @@ public class Senzor {
 
         if (this.responseCode == 200) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
 
     }
 
-    private Runnable runnableCheckTemperature = new Runnable(){
+    private Runnable runnableCheckTemperature = new Runnable() {
         /*
         Opis:
         naredimo nov objekt Runnable, ki ga potem lahko poklicemo v novem threadu
@@ -95,13 +94,12 @@ public class Senzor {
         public void run() {
             temperatura = new ArrayList<Float>();
             vsaj_ena_temeratura = false;
-            for(int i = 1;i <= stevilo_podsenzorjev;i++) {
+            for (int i = 1; i <= stevilo_podsenzorjev; i++) {
 
                 String url;
-                if(stevilo_podsenzorjev == 1){
+                if (stevilo_podsenzorjev == 1) {
                     url = "http://" + ip + "/api/temperature?apikey=" + zeton;
-                }
-                else {
+                } else {
                     url = "http://" + ip + "/api/temperature/" + String.valueOf(i) + "?apikey=" + zeton;
                 }
                 Log.d("INTERNET", url);
@@ -109,7 +107,7 @@ public class Senzor {
                     HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                     responseCode = connection.getResponseCode();
                     InputStream inputStream;
-                    if(responseCode == 200) {
+                    if (responseCode == 200) {
                         inputStream = connection.getInputStream();
                         BufferedReader in = new BufferedReader(
                                 new InputStreamReader(
@@ -125,8 +123,7 @@ public class Senzor {
                         in.close();
                         temperatura.add(Float.valueOf(String.valueOf(response)));
                         vsaj_ena_temeratura = true;
-                    }
-                    else{
+                    } else {
                         temperatura.add(SLABATEMP);
                     }
                     connection.disconnect();
@@ -139,7 +136,7 @@ public class Senzor {
         }
     };
 
-    private Runnable runnableCheckFirstTemperature = new Runnable(){
+    private Runnable runnableCheckFirstTemperature = new Runnable() {
         /*
         Opis:
         naredimo nov objekt Runnable, ki ga potem lahko poklicemo v novem threadu
@@ -148,46 +145,44 @@ public class Senzor {
         Izhod:/
         */
         public void run() {
-                String url;
-                if(stevilo_podsenzorjev == 1){
-                    url = "http://" + ip + "/api/temperature?apikey=" + zeton;
-                }
-                else {
-                    url = "http://" + ip + "/api/temperature/1?apikey=" + zeton;
-                }
-                Log.d("INTERNET", url);
-                try {
-                    HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-                    responseCode = connection.getResponseCode();
-                    InputStream inputStream;
-                    if(responseCode == 200) {
-                        inputStream = connection.getInputStream();
-                        BufferedReader in = new BufferedReader(
-                                new InputStreamReader(
-                                        inputStream));
-
-                        StringBuilder response = new StringBuilder();
-                        String currentLine;
-
-                        while ((currentLine = in.readLine()) != null)
-                            response.append(currentLine);
-                        Log.d("INTERNET", "temperatura: " + String.valueOf(response));
-
-                        in.close();
-                        temperatura_prvi = Float.valueOf(String.valueOf(response));
-                    }
-                    else{
-                        temperatura_prvi = SLABATEMP;
-                    }
-                    connection.disconnect();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            String url;
+            if (stevilo_podsenzorjev == 1) {
+                url = "http://" + ip + "/api/temperature?apikey=" + zeton;
+            } else {
+                url = "http://" + ip + "/api/temperature/1?apikey=" + zeton;
             }
+            Log.d("INTERNET", url);
+            try {
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                responseCode = connection.getResponseCode();
+                InputStream inputStream;
+                if (responseCode == 200) {
+                    inputStream = connection.getInputStream();
+                    BufferedReader in = new BufferedReader(
+                            new InputStreamReader(
+                                    inputStream));
+
+                    StringBuilder response = new StringBuilder();
+                    String currentLine;
+
+                    while ((currentLine = in.readLine()) != null)
+                        response.append(currentLine);
+                    Log.d("INTERNET", "temperatura: " + String.valueOf(response));
+
+                    in.close();
+                    temperatura_prvi = Float.valueOf(String.valueOf(response));
+                } else {
+                    temperatura_prvi = SLABATEMP;
+                }
+                connection.disconnect();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     };
 
-    private Runnable runnableGetOnline = new Runnable(){
+    private Runnable runnableGetOnline = new Runnable() {
         /*
         Opis:
         naredimo nov objekt Runnable, ki ga potem lahko poklicemo v novem threadu
@@ -202,7 +197,7 @@ public class Senzor {
                 HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                 responseCode = connection.getResponseCode();
                 InputStream inputStream;
-                if(responseCode == 200) {
+                if (responseCode == 200) {
                     inputStream = connection.getInputStream();
                     BufferedReader in = new BufferedReader(
                             new InputStreamReader(
@@ -218,8 +213,7 @@ public class Senzor {
                     in.close();
                     online = true;
                     prizgan = StringtoBool(String.valueOf(response));
-                }
-                else{
+                } else {
                     online = false;
                     prizgan = false;
                 }
@@ -231,36 +225,32 @@ public class Senzor {
         }
     };
 
-    public boolean SenzorPrizgiUgasni(boolean prizgi){
+    public boolean SenzorPrizgiUgasni(boolean prizgi) {
 
         String url;
         if (prizgi) {
             url = "http://" + ip + "/api/relay/0?apikey=" + zeton + "&value=1";
-        }
-        else{
+        } else {
             url = "http://" + ip + "/api/relay/0?apikey=" + zeton + "&value=0";
         }
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
             responseCode = connection.getResponseCode();
             InputStream inputStream;
-            if(responseCode == 200) {
+            if (responseCode == 200) {
                 connection.disconnect();
                 //se pravilno nastavimo vrednost prizgan
-                if(prizgi){
+                if (prizgi) {
                     prizgan = true;
-                }
-                else{
+                } else {
                     prizgan = false;
                 }
-                return  true;
-            }
-            else{
+                return true;
+            } else {
                 //pravilno nastavimo vrednost prizgan
-                if(prizgi){
-                    prizgan=false;
-                }
-                else{
+                if (prizgi) {
+                    prizgan = false;
+                } else {
                     prizgan = true;
                 }
                 connection.disconnect();
@@ -269,12 +259,11 @@ public class Senzor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //se ni implementiran
-        return true;
+        return false;
     }
 
-    public Pair<Boolean,Boolean> SenzorGetOnline(){
-        Pair<Boolean,Boolean> par;
+    public Pair<Boolean, Boolean> SenzorGetOnline() {
+        Pair<Boolean, Boolean> par;
         Thread thread = new Thread(runnableGetOnline);
         thread.start();
         try {
@@ -283,21 +272,19 @@ public class Senzor {
             e.printStackTrace();
         }
 
-        if (online){
-            if(prizgan){
-                par = new Pair<>(true,true);
+        if (online) {
+            if (prizgan) {
+                par = new Pair<>(true, true);
+            } else {
+                par = new Pair<>(true, false);
             }
-            else{
-                par = new Pair<>(true,false);
-            }
-        }
-        else{
-            par = new Pair<>(false,false);
+        } else {
+            par = new Pair<>(false, false);
         }
         return par;
     }
 
-    public float getFirstTemp(){
+    public float getFirstTemp() {
         Thread thread = new Thread(runnableCheckFirstTemperature);
         thread.start();
         try {
@@ -308,13 +295,12 @@ public class Senzor {
 
         if (temperatura_prvi == SLABATEMP) {
             return SLABATEMP;
-        }
-        else {
+        } else {
             return temperatura_prvi;
         }
     }
 
-    public boolean SensorCheckTemerature(){
+    public boolean SensorCheckTemerature() {
         /*
         Opis:
         Funkcija SensorCheckTemerature pozene runnableCheckTemperature na novem threadu, ter pocaka da se zakljuci
@@ -333,8 +319,7 @@ public class Senzor {
 
         if (vsaj_ena_temeratura) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
 
@@ -408,18 +393,52 @@ public class Senzor {
     public void addImena_temperaturnih_senzorjev(String ime) {
         this.imena_temperaturnih_senzorjev.add(ime);
     }
-    public void setImena_temperaturnih_senzorjev(List<String> seznam){
+
+    public void setImena_temperaturnih_senzorjev(List<String> seznam) {
         this.imena_temperaturnih_senzorjev = seznam;
     }
-    private Boolean StringtoBool(String s){
-        if(s.equals("1")){
+
+    private Boolean StringtoBool(String s) {
+        if (s.equals("1")) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
-    public boolean getPrizgan(){
+
+    public boolean getPrizgan() {
         return prizgan;
+    }
+
+    public int getStatusBuffer() {
+        return StatusBuffer;
+    }
+
+    public void setStatusBuffer(int statusBuffer) {
+        StatusBuffer = statusBuffer;
+    }
+
+    public int getCommandBuffer() {
+        return CommandBuffer;
+    }
+
+    public void setCommandBuffer(int commandBuffer) {
+        CommandBuffer = commandBuffer;
+    }
+
+    public int getCommand() {
+        return Command;
+    }
+
+    public void setCommand(int command) {
+        Command = command;
+    }
+
+    public void addCommandBuffer() {
+        CommandBuffer += 1;
+    }
+
+    public void addStatusBuffer() {
+        StatusBuffer += 1;
     }
 }

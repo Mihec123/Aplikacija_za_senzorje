@@ -212,27 +212,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
         //////////////////////////////////////////////////////////////////////////////////////////
         return okno;
     }
-
-    private int isInGroup(){
-        if (config.getVrstni_red().contains(id_senzorja)){
-            //ce senzor je v main vrsnem redu potem ni v nobeni grupi vrnemo 0
-            return 0;
-        }
-        else{
-            //je v neki grupi hocemo vrnt id grupe
-            Grupa group;
-            for(Grupa el:config.getGrupe()){
-                for(Senzor el1:el.getSenzorji()){
-                    if(el1.getId() == id_senzorja){
-                        //najdl smo v tej grupi senzor
-                        return el.getId();
-                    }
-                }
-            }
-            //neki je slo narobe
-            return 1;
-        }
-    }
+    
 
     @Override
     public void onClick(View view) {
