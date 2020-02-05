@@ -2,6 +2,9 @@ package com.example.aplikacijasenzorji;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -9,6 +12,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
@@ -17,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -24,6 +29,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.github.angads25.filepicker.controller.DialogSelectionListener;
+import com.github.angads25.filepicker.model.DialogConfigs;
+import com.github.angads25.filepicker.model.DialogProperties;
+import com.github.angads25.filepicker.view.FilePickerDialog;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -664,6 +675,113 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return Color.HSVToColor(hsv);
     }
 
+
+    private void exportFile(){
+        if (!checkPermissionForWriteExtertalStorage()){
+            try {
+                requestPermissionForWriteExtertalStorage();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if(checkPermissionForWriteExtertalStorage()){
+                shranifile();
+            }
+        }
+        else{
+            shranifile();
+        }
+    }
+
+    private void shranifile() {
+        final String m_Text = "devices"; //default ime je devices
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Name of the file");
+
+// Set up the input
+        EditText input1 = new EditText(this);
+        input1.setText(m_Text);
+        final EditText input = input1;
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+// Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String ime = input.getText().toString();
+                if (!ime.equals("")){
+                    boolean uspeli = config.writeConfigurationsValues(getExternalFilesDir(null).getPath() + "/" + ime + ".txt");
+                    if(uspeli){
+                        Context context = getApplicationContext();
+                        CharSequence text = getString(R.string.sucExport);
+                        int duration = Toast.LENGTH_SHORT;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+
+                    }
+                    else{
+                        Context context = getApplicationContext();
+                        CharSequence text = getString(R.string.failExport);
+                        int duration = Toast.LENGTH_SHORT;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    }
+                }
+                else {
+
+                    Context context = getApplicationContext();
+                    CharSequence text = "Name can't be empty!";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+
+    private void importFile(){
+        DialogProperties properties = new DialogProperties();
+        properties.selection_mode = DialogConfigs.SINGLE_MODE;
+        properties.selection_type = DialogConfigs.FILE_SELECT;
+        properties.root = new File(getExternalFilesDir(null).getPath());
+        properties.error_dir = new File(DialogConfigs.STORAGE_DIR + "/sdcard");
+        properties.offset = new File(DialogConfigs.DEFAULT_DIR);
+        properties.extensions = null;
+        FilePickerDialog dialog = new FilePickerDialog(MainActivity.this,properties);
+        dialog.setTitle("Select a File");
+        dialog.setDialogSelectionListener(new DialogSelectionListener() {
+            @Override
+            public void onSelectedFilePaths(String[] files) {
+                //files is the array of the paths of files selected by the Application User.
+                String new_file = files[0];
+                Log.d("import",new_file);
+                Log.d("import", String.valueOf(files));
+                config.getConfigurationValue(new_file);
+                config.writeConfigurationsValues(FILEPATH);
+                Log.d("import","importal");
+                Intent refresh = new Intent(MainActivity.this, MainActivity.class);
+                finish();
+                startActivity(refresh);
+                Log.d("import","loudal");
+            }
+        });
+        dialog.show();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //naredimo meni in klicemo primeren layout iz folderja menu
@@ -691,6 +809,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent = new Intent(this, SortActivity.class);
                 startActivity(intent);
                 this.finish();
+                return true;
+            case R.id.exportD:
+                exportFile();
+                return true;
+            case R.id.importD:
+                importFile();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
