@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,6 +42,8 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
     float scale;
     String FILEPATH;
     private float SLABATEMP = -99999;
+    private boolean koncajLoop = false;
+    private int SLEEP_TIME = 6000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -229,8 +232,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
 
     private Runnable pozeni_check3 = new Runnable() {
         public void run() {
-            while (true) {
-                SystemClock.sleep(2000);
+            while (!koncajLoop) {
                 Log.d("senzor_main", "zacetek3");
 
                 final Float vlaga = senzor.getVlaga();
@@ -238,7 +240,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
                 SensorViewActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        TextView text_grupe = lin.findViewById(1);
+                        @SuppressLint("ResourceType") TextView text_grupe = lin.findViewById(1);
                         Log.d("senzor_main", String.valueOf(text_grupe));
                         if (vlaga != SLABATEMP) {
                             text_grupe.setText(String.valueOf(vlaga));
@@ -251,9 +253,10 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
 
 
                 Log.d("senzor_main", "konec3");
-                SystemClock.sleep(2000);
+                SystemClock.sleep(SLEEP_TIME);
 
             }
+            return;
         }
     };
 
@@ -265,7 +268,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
 
     private Runnable pozeni_check2 = new Runnable() {
         public void run() {
-            while (true) {
+            while (!koncajLoop) {
                 Log.d("senzor_main", "zacetek2");
 
                 senzor.SensorCheckTemerature();
@@ -276,7 +279,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
                 SensorViewActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        TextView text_grupe = lin.findViewById(1);
+                        @SuppressLint("ResourceType") TextView text_grupe = lin.findViewById(1);
                         if (vlaga != SLABATEMP) {
                             text_grupe.setText(String.valueOf(vlaga));
                         }
@@ -296,9 +299,10 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
 
 
                 Log.d("senzor_main", "konec2");
-                SystemClock.sleep(2000);
+                SystemClock.sleep(SLEEP_TIME);
 
             }
+            return;
         }
     };
 
@@ -310,7 +314,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
 
     private Runnable pozeni_check1 = new Runnable() {
         public void run() {
-            while (true) {
+            while (!koncajLoop) {
                 Log.d("senzor_main", "zacetek1");
 
                 senzor.SensorCheckTemerature();
@@ -340,9 +344,10 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
 
 
                 Log.d("senzor_main", "konec1");
-                SystemClock.sleep(2000);
+                SystemClock.sleep(SLEEP_TIME);
 
             }
+            return;
         }
     };
 
@@ -369,6 +374,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
 
                         //vrnemo se na main activity
                         Intent refresh = new Intent(SensorViewActivity.this, MainActivity.class);
+                        koncajLoop = true;
                         startActivity(refresh);
                         SensorViewActivity.this.finish();
 
@@ -407,6 +413,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
                         Bundle bundle = new Bundle();
                         bundle.putInt("id", id_grupe);
                         refresh.putExtras(bundle);
+                        koncajLoop = true;
                         startActivity(refresh);
                         SensorViewActivity.this.finish();
 
@@ -430,6 +437,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
             Bundle bundle = new Bundle();
             bundle.putInt("id", id_senzorja);
             refresh.putExtras(bundle);
+            koncajLoop = true;
             startActivity(refresh);
             SensorViewActivity.this.finish();
         }
@@ -442,6 +450,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
         if (id_grupe == 0) {
             //prsli iz main screena
             Intent refresh = new Intent(this, MainActivity.class);
+            koncajLoop = true;
             startActivity(refresh);
             this.finish();
         } else {
@@ -450,6 +459,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
             Bundle bundle = new Bundle();
             bundle.putInt("id", id_grupe);
             refresh.putExtras(bundle);
+            koncajLoop = true;
             startActivity(refresh);
             this.finish();
         }

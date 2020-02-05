@@ -137,6 +137,7 @@ public class Senzor {
                     temperatura.add(SLABATEMP);
                 }
             }
+            return;
 
         }
     };
@@ -156,7 +157,7 @@ public class Senzor {
             } else {
                 url = "http://" + ip + "/api/temperature/1?apikey=" + zeton;
             }
-            //Log.d("INTERNET", url);
+            Log.d("INTERNET", url);
             try {
                 HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                 responseCode = connection.getResponseCode();
@@ -172,7 +173,7 @@ public class Senzor {
 
                     while ((currentLine = in.readLine()) != null)
                         response.append(currentLine);
-                    //Log.d("INTERNET", "temperatura: " + String.valueOf(response));
+                    Log.d("INTERNET", "temperatura: " + String.valueOf(response));
 
                     in.close();
                     temperatura_prvi = Float.valueOf(String.valueOf(response));
@@ -184,6 +185,7 @@ public class Senzor {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return;
         }
     };
 
@@ -213,7 +215,7 @@ public class Senzor {
 
                     while ((currentLine = in.readLine()) != null)
                         response.append(currentLine);
-                    //Log.d("INTERNET", "temperatura: " + String.valueOf(response));
+                    Log.d("INTERNET", "temperatura: " + String.valueOf(response));
 
                     in.close();
                     online = true;
@@ -227,6 +229,7 @@ public class Senzor {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return;
         }
     };
 
@@ -256,7 +259,7 @@ public class Senzor {
 
                     while ((currentLine = in.readLine()) != null)
                         response.append(currentLine);
-                    //Log.d("INTERNET", "temperatura: " + String.valueOf(response));
+                    Log.d("INTERNET", "temperatura: " + String.valueOf(response));
 
                     in.close();
                     vlaga = Float.valueOf(String.valueOf(response));
@@ -268,6 +271,7 @@ public class Senzor {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return;
         }
     };
 

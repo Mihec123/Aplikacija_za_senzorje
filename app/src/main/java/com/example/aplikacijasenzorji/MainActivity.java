@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int BUFFER = 3;
     private List<RelativeLayout> gumbi_oblika = new ArrayList<>(); //sem bomo shranjevali toggle butne da jim bomo lahko menjal ozadja
     private float SLABATEMP = -99999;
+    private boolean koncajLoop = false;
+    private int SLEEP_TIME = 2000;
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -60,24 +62,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //vprasamo za dovoljenje za pisanje na zunanji disk in branje ce tega se nimamo
-        /////////////////////////////////////////////////////////////////////////////////////////
-        boolean dovoljenje = checkPermissionForWriteExtertalStorage();
-        if (!dovoljenje) {
-            try {
-                requestPermissionForWriteExtertalStorage();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        dovoljenje = checkPermissionForReadExtertalStorage();
-        if (!dovoljenje) {
-            try {
-                requestPermissionForReadExtertalStorage();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//        //vprasamo za dovoljenje za pisanje na zunanji disk in branje ce tega se nimamo
+//        /////////////////////////////////////////////////////////////////////////////////////////
+//        boolean dovoljenje = checkPermissionForWriteExtertalStorage();
+//        if (!dovoljenje) {
+//            try {
+//                requestPermissionForWriteExtertalStorage();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        dovoljenje = checkPermissionForReadExtertalStorage();
+//        if (!dovoljenje) {
+//            try {
+//                requestPermissionForReadExtertalStorage();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         /////////////////////////////////////////////////////////////////////////////////////
         config = new Config();
@@ -105,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (int stevilo : config.getVrstni_red()) {
             if (stevilo < 0) {
                 grupa = config.getGrupe().get(config.getIdGrup().indexOf(stevilo));
-                temp = gumbi.OblikaGumbaGrupa(grupa.getIme(), grupa.getBarva(), false, false, false, grupa.getStevilo_senzorjev(), false, scale, grupa.getId(), MainActivity.this, this);
+                temp = gumbi.OblikaGumbaGrupa(grupa.getIme(), Color.GRAY, false, false, false, grupa.getStevilo_senzorjev(), false, scale, grupa.getId(), MainActivity.this, this);
                 gumbi_oblika.add(temp);
             } else {
                 senzor = config.getSenzorji().get(config.getIdSenzor().indexOf(stevilo));
@@ -123,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Runnable pozeni_check = new Runnable() {
         public void run() {
-            while (true) {
+            while (!koncajLoop) {
                 Log.i("run_del", "zacel zanko");
                 for (int id : config.getIdSenzor()) {
                     //senzor
@@ -590,9 +592,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 }
                 Log.i("run_del", "koncal zanko");
-                SystemClock.sleep(2000);
+                SystemClock.sleep(SLEEP_TIME);
 
             }
+            return;
         }
     };
 
@@ -684,9 +687,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if(checkPermissionForWriteExtertalStorage()){
-                shranifile();
-            }
         }
         else{
             shranifile();
@@ -774,6 +774,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 config.writeConfigurationsValues(FILEPATH);
                 Log.d("import","importal");
                 Intent refresh = new Intent(MainActivity.this, MainActivity.class);
+                koncajLoop = true; //zakljuci main loop
                 finish();
                 startActivity(refresh);
                 Log.d("import","loudal");
@@ -797,16 +798,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (item.getItemId()) {
             case R.id.dodaj_senzor:
                 intent = new Intent(this, AddSenzorActivity.class);
+                koncajLoop = true; //zakljuci main loop
                 startActivity(intent);
                 this.finish();
                 return true;
             case R.id.dodaj_grupo:
                 intent = new Intent(this, AddGroupActivity.class);
+                koncajLoop = true; //zakljuci main loop
                 startActivity(intent);
                 this.finish();
                 return true;
             case R.id.sort:
                 intent = new Intent(this, SortActivity.class);
+                koncajLoop = true; //zakljuci main loop
                 startActivity(intent);
                 this.finish();
                 return true;
@@ -880,6 +884,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Bundle bundle = new Bundle();
                 bundle.putInt("id", id);
                 intent.putExtras(bundle);
+                koncajLoop = true; //zakljuci main loop
                 startActivity(intent);
                 this.finish();
             } else {
@@ -890,6 +895,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 bundle.putInt("id", id);
                 bundle.putInt("id_grupe", 0);
                 intent.putExtras(bundle);
+                koncajLoop = true; //zakljuci main loop
                 startActivity(intent);
                 this.finish();
             }

@@ -37,6 +37,8 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
     int BUFFER = 3;
     private float SLABATEMP = -99999;
     private List<RelativeLayout> gumbi_oblika = new ArrayList<>(); //sem bomo shranjevali toggle butne da jim bomo lahko menjal ozadja
+    private boolean koncajLoop = false;
+    private int SLEEP_TIME = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +81,7 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
         grupa = config.getGrupe().get(config.getIdGrup().indexOf(id_grupe));
         RelativeLayout temp;
         for (Senzor sen : grupa.getSenzorji()) {
-            temp = gumbi.OblikaGumbaSenzor(sen.getIme(), sen.getBarva(), false, false, sen.getId(), scale, GroupViewActivity.this, this);
+            temp = gumbi.OblikaGumbaSenzor(sen.getIme(), Color.GRAY, false, false, sen.getId(), scale, GroupViewActivity.this, this);
             okno.addView(temp);
             gumbi_oblika.add(temp);
         }
@@ -91,7 +93,7 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
 
     private Runnable pozeni_check = new Runnable() {
         public void run() {
-            while (true) {
+            while (!koncajLoop) {
                 Log.i("run_del", "zacel zanko");
                 for (Senzor sen : grupa.getSenzorji()) {
                     //senzor
@@ -238,7 +240,8 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                             }
 
                         }
-                    } else {
+                    }
+                    else {
                         Log.d("run_del", "senzor: " + String.valueOf(sen.getId()) + " ni online");
                         //nismo online
                         //pogledamo ce smo prej bli online pa je sam lag potem ohranmo status online
@@ -325,8 +328,9 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                     }
                 }
                 Log.i("run_del", "koncal zanko");
-                SystemClock.sleep(2000);
+                SystemClock.sleep(SLEEP_TIME);
             }
+            return;
 
         }
     };
@@ -409,6 +413,7 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                     Intent refresh = new Intent(GroupViewActivity.this, MainActivity.class);
                     startActivity(refresh);
                     GroupViewActivity.this.finish();
+                    koncajLoop = true;
 
                     dialog.dismiss();
 
@@ -430,6 +435,7 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
             Bundle bundle = new Bundle();
             bundle.putInt("id", id_grupe);
             intent.putExtras(bundle);
+            koncajLoop = true;
             startActivity(intent);
             this.finish();
 
@@ -465,6 +471,7 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                 bundle.putInt("id", id);
                 bundle.putInt("id_grupe", id_grupe);
                 intent.putExtras(bundle);
+                koncajLoop = true;
                 startActivity(intent);
                 this.finish();
             }
@@ -476,6 +483,7 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         Intent refresh = new Intent(this, MainActivity.class);
+        koncajLoop = true;
         startActivity(refresh);
         this.finish();
         return super.onKeyDown(keyCode, event);
