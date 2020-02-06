@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -104,5 +105,17 @@ public class EditGroupActivity extends AppCompatActivity implements View.OnClick
 
         }
 
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        Intent intent = new Intent(this, GroupViewActivity.class);
+        //nardimo nov bundle da loh not damo id grupe
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", id_grupe);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        this.finish();
+        return super.onKeyDown(keyCode, event);
     }
 }

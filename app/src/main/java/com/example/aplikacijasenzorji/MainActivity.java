@@ -40,6 +40,7 @@ import java.util.List;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
 
 
@@ -139,8 +140,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (online.first.equals(true)) {
                             Log.d("run_del", "senzor: " + String.valueOf(id) + " je online");
                             //smo online
-                            ImageView temp_image = relativeLayout.findViewWithTag("status");
-                            temp_image.setBackgroundResource(R.drawable.ic_wifi_black_24dp);
+//                            ImageView temp_image = relativeLayout.findViewWithTag("status");
+//                            temp_image.setBackgroundResource(R.drawable.ic_wifi_black_24dp);
 
                             //pobarvamo senzor
                             View view = relativeLayout.findViewWithTag("barva");
@@ -156,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if (temp_prvega_senzorja == SLABATEMP) {
                                 temp_prvega_senzorja_text = "/";
                             } else {
-                                temp_prvega_senzorja_text = String.valueOf(temp_prvega_senzorja);
+                                temp_prvega_senzorja_text = String.valueOf(temp_prvega_senzorja)  + (char) 0x00B0 +"C";
                             }
                             final String temp_prvega_senzorja_text_final = temp_prvega_senzorja_text;
 
@@ -350,8 +351,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 sen.setCommandBuffer(0);
                                 sen.setStatusBuffer(0);
                                 //dodal bomo ofline znak
-                                ImageView temp_image = relativeLayout.findViewWithTag("status");
-                                temp_image.setBackgroundResource(R.drawable.ic_signal_wifi_off_black_24dp);
+//                                ImageView temp_image = relativeLayout.findViewWithTag("status");
+//                                temp_image.setBackgroundResource(R.drawable.ic_signal_wifi_off_black_24dp);
 
                             } else {
                                 //nismo bli online pustimo pri meru
@@ -539,8 +540,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     if (st_online > 0) {
                         //recemo da je grupa online
-                        ImageView temp_image = relativeLayout.findViewWithTag("status");
-                        temp_image.setBackgroundResource(R.drawable.ic_wifi_black_24dp);
+//                        ImageView temp_image = relativeLayout.findViewWithTag("status");
+//                        temp_image.setBackgroundResource(R.drawable.ic_wifi_black_24dp);
                         //pobarvamo grupo
                         View view = relativeLayout.findViewWithTag("barva");
                         view.setBackground(create_gd(grupa.getBarva()));
@@ -563,8 +564,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     } else {
                         //recemo da je grupa offline
-                        ImageView temp_image = relativeLayout.findViewWithTag("status");
-                        temp_image.setBackgroundResource(R.drawable.ic_signal_wifi_off_black_24dp);
+//                        ImageView temp_image = relativeLayout.findViewWithTag("status");
+//                        temp_image.setBackgroundResource(R.drawable.ic_signal_wifi_off_black_24dp);
                         //pobarvamo grupo
                         View view = relativeLayout.findViewWithTag("barva");
                         view.setBackground(create_gd(Color.GRAY));
@@ -579,7 +580,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
 
                     //damo napise na grupo
-                    final String opis_grupe = "#: " + String.valueOf(grupa.getStevilo_senzorjev()) + ", Online: " + String.valueOf(st_online) + ", On: " + String.valueOf(st_prizganih);
+                    final String opis_grupe = "Online:"+ String.valueOf(st_online)+"/" + String.valueOf(grupa.getStevilo_senzorjev()) + ", On:" + String.valueOf(st_prizganih);
 
                     final TextView text_grupe = relativeLayout.findViewWithTag("stevila");
                     MainActivity.this.runOnUiThread(new Runnable() {
@@ -789,6 +790,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         return true;
+    }
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.menu, popup.getMenu());
+        popup.show();
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // obravnavamo izbrane primere iz menija
+                Intent intent;
+                switch (item.getItemId()) {
+                    case R.id.dodaj_senzor:
+                        intent = new Intent(MainActivity.this, AddSenzorActivity.class);
+                        koncajLoop = true; //zakljuci main loop
+                        startActivity(intent);
+                        MainActivity.this.finish();
+                        return true;
+                    case R.id.dodaj_grupo:
+                        intent = new Intent(MainActivity.this, AddGroupActivity.class);
+                        koncajLoop = true; //zakljuci main loop
+                        startActivity(intent);
+                        MainActivity.this.finish();
+                        return true;
+                    case R.id.sort:
+                        intent = new Intent(MainActivity.this, SortActivity.class);
+                        koncajLoop = true; //zakljuci main loop
+                        startActivity(intent);
+                        MainActivity.this.finish();
+                        return true;
+                    case R.id.exportD:
+                        exportFile();
+                        return true;
+                    case R.id.importD:
+                        importFile();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
     }
 
     @Override

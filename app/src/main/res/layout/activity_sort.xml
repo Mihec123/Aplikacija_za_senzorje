@@ -4,10 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/ozadje"
     tools:context=".SortActivity">
+
     <com.example.aplikacijasenzorji.DraggableTreeView
+        android:id="@+id/dtv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/dtv"></com.example.aplikacijasenzorji.DraggableTreeView>
+        android:layout_height="match_parent"></com.example.aplikacijasenzorji.DraggableTreeView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -26,6 +27,7 @@ import java.util.List;
 public class EditSenzorActivity extends AppCompatActivity implements View.OnClickListener {
     String filename = "devices.txt";
     int id_senzorja;
+    int id_grupe;
     String FILEPATH;
     LinearLayout lin;
     Config config = new Config();
@@ -43,6 +45,7 @@ public class EditSenzorActivity extends AppCompatActivity implements View.OnClic
 
         Bundle bundle = getIntent().getExtras();
         id_senzorja = bundle.getInt("id");
+        id_grupe = bundle.getInt("id_grupe");
 
         FILEPATH = this.getFilesDir() +"/"+filename;
         config.getConfigurationValue(FILEPATH);
@@ -116,9 +119,14 @@ public class EditSenzorActivity extends AppCompatActivity implements View.OnClic
                 //shranimo config file
                 config.writeConfigurationsValues(FILEPATH);
 
-                //gremo nazaj na main activity
-                Intent refresh = new Intent(this, MainActivity.class);
-                startActivity(refresh);
+                //gremo nazaj na senzor
+                Intent intent = new Intent(this, SensorViewActivity.class);
+                //nardimo nov bundle da loh not damo id senzorja
+                Bundle bundle = new Bundle();
+                bundle.putInt("id", id_senzorja);
+                bundle.putInt("id_grupe", id_grupe);
+                intent.putExtras(bundle);
+                startActivity(intent);
                 this.finish();
             }
             else{
@@ -184,5 +192,19 @@ public class EditSenzorActivity extends AppCompatActivity implements View.OnClic
 
         }
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        Intent intent = new Intent(this, SensorViewActivity.class);
+        //nardimo nov bundle da loh not damo id senzorja
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", id_senzorja);
+        bundle.putInt("id_grupe", id_grupe);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        this.finish();
+        return super.onKeyDown(keyCode, event);
     }
 }

@@ -30,6 +30,7 @@ public class Gumb_Creation {
         int dp20 = (int) (20 * scale + 0.5f);
         int dp40 = (int) (40 * scale + 0.5f);
         int dp90 = (int) (90 * scale + 0.5f);
+        int sirina_sc = (int) (100000 * scale + 0.5f);
 
         int visina = dp120;
 
@@ -42,6 +43,10 @@ public class Gumb_Creation {
         RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT);
+
+        rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+        rl.setLayoutParams(rlp);
 
 
         ///////////////////////////////////////////////////////////////////////////
@@ -119,6 +124,8 @@ public class Gumb_Creation {
 
         ImageView im_forground = new ImageView(context);
         im_forground.setId(View.generateViewId());
+        im_forground.setOnClickListener(listener);
+        im_forground.setTag(String.valueOf(id)+",vec");
 
         //uporabimo prejsno spremenljivko za parametre in jo povozimo
         lp = new RelativeLayout.LayoutParams(
@@ -138,7 +145,7 @@ public class Gumb_Creation {
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        //dodamo text a je senzor al grupa
+        //dodamo text senzor
 
         TextView opis = new TextView(context);
         opis.setId(View.generateViewId());
@@ -169,7 +176,7 @@ public class Gumb_Creation {
         ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-        //dodamo ime senzorja ali grupe
+        //dodamo ime senzorja
 
         TextView ime = new TextView(context);
         ime.setId(View.generateViewId());
@@ -209,10 +216,10 @@ public class Gumb_Creation {
         lp = new RelativeLayout.LayoutParams(
                 dp90,
                 dp90 );
-        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        lp.addRule(RelativeLayout.CENTER_VERTICAL);
         lp.addRule(RelativeLayout.ALIGN_RIGHT,im_forground.getId());
-        lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
-        lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
+        //lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
+        //lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
 
         lp.setMargins(0,dp5,dp10,dp5);
 
@@ -220,45 +227,22 @@ public class Gumb_Creation {
         OnOff.setOnClickListener(listener);
         rl.addView(OnOff);
 
-
-        ////////////////////////////////////////////////////////////////////////////////////////////
-
-        //dodamo gumb za vec opcij
-
-        Button vec_opcij = new Button(context);
-        vec_opcij.setTag(String.valueOf(id)+",vec");
-        vec_opcij.setId(View.generateViewId());
-
-        lp = new RelativeLayout.LayoutParams(
-                dp40,
-                dp90 );
-        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
-        lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
-        lp.addRule(RelativeLayout.LEFT_OF,OnOff.getId());
-
-        lp.setMargins(0,dp5,dp5,dp5);
-
-        vec_opcij.setLayoutParams(lp);
-        vec_opcij.setOnClickListener(listener);
-        rl.addView(vec_opcij);
-
         ///////////////////////////////////////////////////////////////////////////////////////////
-        //dodamo image view ki kaze a smo online al offline
-        ImageView status = new ImageView(context);
-        status.setTag("status");
-        status.setBackgroundResource(R.drawable.ic_signal_wifi_off_black_24dp);
-        lp = new RelativeLayout.LayoutParams(
-                dp40,
-                dp40 );
-        //lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
-        //lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
-        lp.addRule(RelativeLayout.LEFT_OF,vec_opcij.getId());
-
-        lp.setMargins(0,dp20,dp5,0);
-
-        status.setLayoutParams(lp);
-        rl.addView(status);
+//        //dodamo image view ki kaze a smo online al offline
+//        ImageView status = new ImageView(context);
+//        status.setTag("status");
+//        status.setBackgroundResource(R.drawable.ic_signal_wifi_off_black_24dp);
+//        lp = new RelativeLayout.LayoutParams(
+//                dp40,
+//                dp40 );
+//        //lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
+//        //lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
+//        lp.addRule(RelativeLayout.LEFT_OF,OnOff.getId());
+//
+//        lp.setMargins(0,dp20,dp5,0);
+//
+//        status.setLayoutParams(lp);
+//        rl.addView(status);
 
         //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -271,8 +255,9 @@ public class Gumb_Creation {
 
         temperatura.setTextColor(Color.GREEN);
         temperatura.setTextSize(dp5);
-        temperatura.setBackgroundResource(R.drawable.techframe_medium);
+        temperatura.setBackgroundResource(R.drawable.techframeshort);
         temperatura.setGravity(Gravity.CENTER);
+        temperatura.setPadding(10,0,10,0);
 
         typeface = ResourcesCompat.getFont(context, R.font.clock_font);
         temperatura.setTypeface(typeface);
@@ -281,14 +266,14 @@ public class Gumb_Creation {
         lp = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT );
-        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        lp.addRule(RelativeLayout.ALIGN_LEFT,im_forground.getId());
-        lp.addRule(RelativeLayout.ALIGN_TOP,ime.getId());
-        lp.setMargins(dp20,dp40,0,0);
+        lp.addRule(RelativeLayout.CENTER_VERTICAL);
+        lp.addRule(RelativeLayout.LEFT_OF,OnOff.getId());
+        lp.setMargins(0,0,dp10,0);
 
         temperatura.setLayoutParams(lp);
         rl.addView(temperatura);
         /////////////////////////////////////////////////////////////////////////////////////////
+
 
         return rl;
     }
@@ -305,10 +290,10 @@ public class Gumb_Creation {
         int dp20 = (int) (20 * scale + 0.5f);
         int dp40 = (int) (40 * scale + 0.5f);
         int dp90 = (int) (90 * scale + 0.5f);
-        int dp130 = (int) (130 * scale + 0.5f);
+        int dp160 = (int) (160 * scale + 0.5f);
         int dp35 = (int) (35 * scale + 0.5f);
 
-        int visina = dp130;
+        int visina = dp160;
 
 
         // Creating a new RelativeLayout
@@ -396,6 +381,8 @@ public class Gumb_Creation {
 
         ImageView im_forground = new ImageView(context);
         im_forground.setId(View.generateViewId());
+        im_forground.setOnClickListener(listener);
+        im_forground.setTag(String.valueOf(id)+",vec");
 
         //uporabimo prejsno spremenljivko za parametre in jo povozimo
         lp = new RelativeLayout.LayoutParams(
@@ -461,8 +448,8 @@ public class Gumb_Creation {
                 RelativeLayout.LayoutParams.WRAP_CONTENT );
         lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
         lp.addRule(RelativeLayout.ALIGN_LEFT,im_forground.getId());
-        lp.addRule(RelativeLayout.ALIGN_TOP,opis.getId());
-        lp.setMargins(dp10,dp40,0,0);
+        lp.addRule(RelativeLayout.BELOW,opis.getId());
+        lp.setMargins(dp10,0,0,0);
 
         ime.setLayoutParams(lp);
         rl.addView(ime);
@@ -473,10 +460,12 @@ public class Gumb_Creation {
         TextView stevec = new TextView(context);
         stevec.setId(View.generateViewId());
         stevec.setText(String.valueOf(stevilo_senzorjev));
+        stevec.setText("Online:0/" + String.valueOf(stevilo_senzorjev) + ", On:0");
         stevec.setTextColor(Color.GREEN);
         stevec.setTextSize(dp5);
-        stevec.setBackgroundResource(R.drawable.techframe_medium);
+        stevec.setBackgroundResource(R.drawable.techframelong);
         stevec.setGravity(Gravity.CENTER);
+        stevec.setPadding(30,0,30,0);
 
         typeface = ResourcesCompat.getFont(context, R.font.clock_font);
         stevec.setTypeface(typeface);
@@ -489,8 +478,9 @@ public class Gumb_Creation {
                 RelativeLayout.LayoutParams.WRAP_CONTENT );
         lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
         lp.addRule(RelativeLayout.ALIGN_LEFT,im_forground.getId());
-        lp.addRule(RelativeLayout.ALIGN_TOP,ime.getId());
-        lp.setMargins(dp20,dp40,0,0);
+        lp.addRule(RelativeLayout.BELOW,ime.getId());
+        lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
+        lp.setMargins(dp10,0,0,dp10);
 
         stevec.setLayoutParams(lp);
         rl.addView(stevec);
@@ -516,10 +506,8 @@ public class Gumb_Creation {
         lp = new RelativeLayout.LayoutParams(
                 dp90,
                 dp90 );
-        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        lp.addRule(RelativeLayout.CENTER_VERTICAL);
         lp.addRule(RelativeLayout.ALIGN_RIGHT,im_forground.getId());
-        lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
-        lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
 
         lp.setMargins(0,dp10,dp10,dp10);
 
@@ -528,49 +516,57 @@ public class Gumb_Creation {
         rl.addView(OnOff);
 
 
-        ////////////////////////////////////////////////////////////////////////////////////////////
-
-        //dodamo gumb za vec opcij
-
-        Button vec_opcij = new Button(context);
-        vec_opcij.setTag(String.valueOf(id)+",vec");
-
-        lp = new RelativeLayout.LayoutParams(
-                dp40,
-                dp90 );
-        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
-        lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
-        lp.addRule(RelativeLayout.LEFT_OF,OnOff.getId());
-
-        lp.setMargins(0,dp5,dp5,dp5);
-
-        vec_opcij.setLayoutParams(lp);
-        vec_opcij.setOnClickListener(listener);
-        rl.addView(vec_opcij);
-
         ///////////////////////////////////////////////////////////////////////////////////////////
         //dodamo image view ki kaze a smo online al offline
-        ImageView status = new ImageView(context);
-        status.setTag("status");
-        status.setBackgroundResource(R.drawable.ic_signal_wifi_off_black_24dp);
-        lp = new RelativeLayout.LayoutParams(
-                dp40,
-                dp40 );
-        //lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
-        //lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
-        lp.addRule(RelativeLayout.LEFT_OF,vec_opcij.getId());
-
-        lp.setMargins(0,dp20,dp5,0);
-
-        status.setLayoutParams(lp);
-        rl.addView(status);
+//        ImageView status = new ImageView(context);
+//        status.setTag("status");
+//        status.setBackgroundResource(R.drawable.ic_signal_wifi_off_black_24dp);
+//        lp = new RelativeLayout.LayoutParams(
+//                dp40,
+//                dp40 );
+//        //lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
+//        //lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
+//        lp.addRule(RelativeLayout.LEFT_OF,OnOff.getId());
+//        lp.addRule(RelativeLayout.CENTER_VERTICAL);
+//
+//        lp.setMargins(0,0,dp20,dp5);
+//
+//        status.setLayoutParams(lp);
+//        rl.addView(status);
 
         //////////////////////////////////////////////////////////////////////////////////////////
 
         return rl;
     }
 
+    public RelativeLayout emptySenzor(float scale,Context context){
+        int dp120 = (int) (120 * scale + 0.5f);
+        int dp5 = (int) (5 * scale + 0.5f);
+        int dp3 = (int) (3 * scale + 0.5f);
+        int dp10 = (int) (10 * scale + 0.5f);
+        int dp20 = (int) (20 * scale + 0.5f);
+        int dp40 = (int) (40 * scale + 0.5f);
+        int dp90 = (int) (90 * scale + 0.5f);
+        int sirina_sc = (int) (100000 * scale + 0.5f);
+
+        int visina = dp120;
+
+
+        // Creating a new RelativeLayout
+        RelativeLayout rl = new RelativeLayout(context);
+
+        // Defining the RelativeLayout layout parameters.
+        // In this case I want to fill its parent
+        RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                visina);
+
+        rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+        rl.setLayoutParams(rlp);
+
+        return rl;
+    }
     private int enlight(int color, float amount) {
         //Vzame barvo in parameter amount, ki mora bit med 0,1 in iz dane barve za
         //procente amount naredi svetlejso barvo

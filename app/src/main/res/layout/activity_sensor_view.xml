@@ -4,15 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/ozadje"
     tools:context=".SensorViewActivity">
 
     <TextView
         android:id="@+id/tv_ime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
         android:layout_marginTop="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/barva"
+        android:background="@android:drawable/editbox_background"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/barvaframe"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,14 +23,25 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <View
-        android:id="@+id/barva"
+        android:id="@+id/barvaframe"
         android:layout_width="33dp"
         android:layout_height="24dp"
         android:layout_marginBottom="16dp"
+        android:background="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/scrollView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_ime" />
+
+    <View
+        android:id="@+id/barva"
+        android:layout_width="30dp"
+        android:layout_height="20dp"
+        android:layout_margin="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/barvaframe"
+        app:layout_constraintLeft_toLeftOf="@+id/barvaframe"
+        app:layout_constraintRight_toRightOf="@+id/barvaframe"
+        app:layout_constraintTop_toBottomOf="@+id/barvaframe" />
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -37,7 +51,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/barva">
+        app:layout_constraintTop_toBottomOf="@+id/barvaframe">
 
         <LinearLayout
             android:id="@+id/linear"
@@ -50,10 +64,11 @@
         android:id="@+id/fb_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:layout_gravity="center"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp"
+        android:clickable="true"
+        app:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="@id/fb_delete"
@@ -63,12 +78,13 @@
         android:id="@+id/fb_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:layout_gravity="center"
         android:layout_marginLeft="5dp"
         android:layout_marginBottom="5dp"
+        android:clickable="true"
+        app:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="@id/fb_edit"
+        app:layout_constraintRight_toRightOf="parent"
         app:srcCompat="@drawable/ic_delete_48px" />
 </androidx.constraintlayout.widget.ConstraintLayout>

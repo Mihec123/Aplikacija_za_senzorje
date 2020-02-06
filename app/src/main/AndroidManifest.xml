@@ -14,14 +14,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditSenzorActivity"></activity>
-        <activity android:name=".EditGroupActivity" />
-        <activity android:name=".GroupViewActivity" />
-        <activity android:name=".SensorViewActivity" />
-        <activity android:name=".SortActivity" />
-        <activity android:name=".AddGroupActivity" />
-        <activity android:name=".AddSenzorActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".EditSenzorActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".EditGroupActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".GroupViewActivity"
+                    android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".SensorViewActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".SortActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".AddGroupActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".AddSenzorActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

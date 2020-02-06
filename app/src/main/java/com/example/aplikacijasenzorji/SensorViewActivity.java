@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.hardware.Sensor;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -158,6 +159,26 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
         TextView temperatura_senzorja = new TextView(this);
         temperatura_senzorja.setId(View.generateViewId());
         temperatura_senzorja.setId(id);
+        temperatura_senzorja.setPadding(10,0,10,0);
+
+        // Initialize a new GradientDrawable
+        GradientDrawable gd = new GradientDrawable();
+
+        // Specify the shape of drawable
+        gd.setShape(GradientDrawable.RECTANGLE);
+
+        // Set the fill color of drawable
+        gd.setColor(Color.WHITE); // make the background transparent
+
+        // Create a 2 pixels width red colored border for drawable
+        gd.setStroke(2, Color.BLACK); // border width and color
+
+        // Make the border rounded
+        gd.setCornerRadius(15.0f); // border corner radius
+
+        // Finally, apply the GradientDrawable as TextView background
+        temperatura_senzorja.setBackground(gd);
+
 
         temperatura_senzorja.setText(senzor.getImena_temperaturnih_senzorjev().get(id) + ": " + getString(R.string.no_value));
         lp = new RelativeLayout.LayoutParams(
@@ -206,6 +227,26 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
         temperatura_senzorja.setId(View.generateViewId());
         temperatura_senzorja.setId(id);
 
+        temperatura_senzorja.setPadding(10,0,10,0);
+
+        // Initialize a new GradientDrawable
+        GradientDrawable gd = new GradientDrawable();
+
+        // Specify the shape of drawable
+        gd.setShape(GradientDrawable.RECTANGLE);
+
+        // Set the fill color of drawable
+        gd.setColor(Color.WHITE); // make the background transparent
+
+        // Create a 2 pixels width red colored border for drawable
+        gd.setStroke(2, Color.BLACK); // border width and color
+
+        // Make the border rounded
+        gd.setCornerRadius(15.0f); // border corner radius
+
+        // Finally, apply the GradientDrawable as TextView background
+        temperatura_senzorja.setBackground(gd);
+
         temperatura_senzorja.setText(getString(R.string.no_value));
         lp = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -243,7 +284,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
                         @SuppressLint("ResourceType") TextView text_grupe = lin.findViewById(1);
                         Log.d("senzor_main", String.valueOf(text_grupe));
                         if (vlaga != SLABATEMP) {
-                            text_grupe.setText(String.valueOf(vlaga));
+                            text_grupe.setText(String.valueOf(vlaga) + "%");
                         }
                         else{
                             text_grupe.setText(getString(R.string.no_value));
@@ -281,7 +322,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
                     public void run() {
                         @SuppressLint("ResourceType") TextView text_grupe = lin.findViewById(1);
                         if (vlaga != SLABATEMP) {
-                            text_grupe.setText(String.valueOf(vlaga));
+                            text_grupe.setText(String.valueOf(vlaga)+ "%");
                         }
                         else{
                             text_grupe.setText(getString(R.string.no_value));
@@ -289,7 +330,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
 
                         if (temperatura != SLABATEMP) {
                             text_grupe = lin.findViewById(0);
-                            text_grupe.setText(String.valueOf(temperatura));
+                            text_grupe.setText(senzor.getImena_temperaturnih_senzorjev().get(0) + ": " + String.valueOf(temperatura)+ (char) 0x00B0 +"C");
                         }
                         else{
                             text_grupe.setText(getString(R.string.no_value));
@@ -329,7 +370,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
                             Log.d("senzor_main", String.valueOf(text_grupe));
                             if (temperature.get(i) != SLABATEMP) {
                                 Log.d("senzor_main", "nastavi text");
-                                text_grupe.setText(String.valueOf(temperature.get(i)));
+                                text_grupe.setText(senzor.getImena_temperaturnih_senzorjev().get(i) + ": " +String.valueOf(temperature.get(i))+ (char) 0x00B0 +"C");
                                 Log.d("senzor_main", "nastavl text");
                             } else {
                                 Log.d("senzor_main", "nastavi text slab");
@@ -436,6 +477,7 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
             Intent refresh = new Intent(SensorViewActivity.this, EditSenzorActivity.class);
             Bundle bundle = new Bundle();
             bundle.putInt("id", id_senzorja);
+            bundle.putInt("id_grupe", id_grupe);
             refresh.putExtras(bundle);
             koncajLoop = true;
             startActivity(refresh);

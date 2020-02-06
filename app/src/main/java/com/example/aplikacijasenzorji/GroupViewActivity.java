@@ -81,10 +81,12 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
         grupa = config.getGrupe().get(config.getIdGrup().indexOf(id_grupe));
         RelativeLayout temp;
         for (Senzor sen : grupa.getSenzorji()) {
-            temp = gumbi.OblikaGumbaSenzor(sen.getIme(), Color.GRAY, false, false, sen.getId(), scale, GroupViewActivity.this, this);
+            temp = gumbi.OblikaGumbaSenzor(sen.getIme(), Color.GRAY, false, false, sen.getId(), scale,GroupViewActivity.this, this);
             okno.addView(temp);
             gumbi_oblika.add(temp);
         }
+
+        okno.addView(gumbi.emptySenzor(scale,this));
 
 
         run_main();
@@ -106,8 +108,8 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                     if (online.first.equals(true)) {
                         Log.d("run_del", "senzor: " + String.valueOf(sen.getId()) + " je online");
                         //smo online
-                        ImageView temp_image = relativeLayout.findViewWithTag("status");
-                        temp_image.setBackgroundResource(R.drawable.ic_wifi_black_24dp);
+//                        ImageView temp_image = relativeLayout.findViewWithTag("status");
+//                        temp_image.setBackgroundResource(R.drawable.ic_wifi_black_24dp);
 
                         //pobarvamo senzor
                         View view = relativeLayout.findViewWithTag("barva");
@@ -123,7 +125,7 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                         if (temp_prvega_senzorja == SLABATEMP) {
                             temp_prvega_senzorja_text = "/";
                         } else {
-                            temp_prvega_senzorja_text = String.valueOf(temp_prvega_senzorja);
+                            temp_prvega_senzorja_text = String.valueOf(temp_prvega_senzorja)  + (char) 0x00B0 +"C";
                         }
                         final String temp_prvega_senzorja_text_final = temp_prvega_senzorja_text;
 
@@ -318,8 +320,8 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                             sen.setCommandBuffer(0);
                             sen.setStatusBuffer(0);
                             //dodal bomo ofline znak
-                            ImageView temp_image = relativeLayout.findViewWithTag("status");
-                            temp_image.setBackgroundResource(R.drawable.ic_signal_wifi_off_black_24dp);
+//                            ImageView temp_image = relativeLayout.findViewWithTag("status");
+//                            temp_image.setBackgroundResource(R.drawable.ic_signal_wifi_off_black_24dp);
 
                         } else {
                             //nismo bli online pustimo pri meru
