@@ -758,7 +758,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DialogProperties properties = new DialogProperties();
         properties.selection_mode = DialogConfigs.SINGLE_MODE;
         properties.selection_type = DialogConfigs.FILE_SELECT;
-        properties.root = new File(getExternalFilesDir(null).getPath());
+        properties.root = new File(DialogConfigs.STORAGE_DIR+"/sdcard");
         properties.error_dir = new File(DialogConfigs.STORAGE_DIR + "/sdcard");
         properties.offset = new File(DialogConfigs.DEFAULT_DIR);
         properties.extensions = null;

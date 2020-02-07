@@ -11,13 +11,13 @@
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="0dp"
+        android:clickable="true"
+        android:onClick="showPopup"
         app:backgroundTint="#00FFFFFF"
-        app:srcCompat="@android:drawable/ic_menu_edit"
-        android:onClick="showPopup"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_preferences" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

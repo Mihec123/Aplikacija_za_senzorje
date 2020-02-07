@@ -7,16 +7,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.angads25.filepicker.widget.OnCheckedChangeListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;
@@ -55,17 +59,17 @@ public class EditSenzorActivity extends AppCompatActivity implements View.OnClic
 
         //Dodamo vse gumbe ter text viewe
         //apply button
-        Button nov = (Button) findViewById(R.id.applay_button1);
+        FloatingActionButton nov = (FloatingActionButton) findViewById(R.id.applay_button1);
         nov.setTag(0);
         nov.setOnClickListener( EditSenzorActivity.this);
 
         //test connection button
-        Button test = (Button) findViewById(R.id.test_button1);
+        FloatingActionButton test = (FloatingActionButton) findViewById(R.id.test_button1);
         test.setTag(1);
         test.setOnClickListener(EditSenzorActivity.this);
 
         //color picker button
-        Button color_picker = (Button) findViewById(R.id.color_button1);
+        FloatingActionButton color_picker = (FloatingActionButton) findViewById(R.id.color_button1);
         color_picker.setTag(2);
         color_picker.setOnClickListener(EditSenzorActivity.this);
 
@@ -79,6 +83,119 @@ public class EditSenzorActivity extends AppCompatActivity implements View.OnClic
         token.setText(senzor.getZeton());
 
         lin = findViewById(R.id.imena_podsenzorjev);
+
+        dolzina = (EditText) findViewById(R.id.editTextNS1);
+        dolzina.setText(String.valueOf(senzor.getStevilo_podsenzorjev()));
+        dolzina.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d("test1", "kle smo");
+                if (s.length() != 0) {
+                    //ni prazno okno
+                    //prevert mormo se ce mamo vlago prizgano najvec en senzor + vlaga
+                    int stevilo = Integer.parseInt(String.valueOf(s));
+                    if (vlaga.isChecked() && stevilo < 2) {
+                        if (stevilo < senzor.getStevilo_podsenzorjev()) {
+                            //ce zmanjsamo stevilo senzorjev
+                            Log.d("test1", "zmanjsal stevilo");
+                            senzor.setStevilo_podsenzorjev(stevilo);
+                            senzor.setImena_temperaturnih_senzorjev(senzor.getImena_temperaturnih_senzorjev().subList(0, stevilo));
+                            Log.d("test1", String.valueOf(senzor.getImena_temperaturnih_senzorjev()));
+                            Log.d("test1", String.valueOf(senzor.getStevilo_podsenzorjev()));
+                        } else {
+                            //ce povecamo stevilo senzorjev
+                            Log.d("test1", "povecal stevilo");
+
+                            for (int i = senzor.getStevilo_podsenzorjev() + 1; i <= stevilo; i++) {
+                                senzor.addImena_temperaturnih_senzorjev(getString(R.string.sensor) + String.valueOf(i));
+                            }
+                            senzor.setStevilo_podsenzorjev(stevilo);
+                            Log.d("test1", String.valueOf(senzor.getImena_temperaturnih_senzorjev()));
+                            Log.d("test1", String.valueOf(senzor.getStevilo_podsenzorjev()));
+                        }
+                        lin.removeAllViews();
+                        //pozenemo zanko za spreminjanje imen temperaturnih podsenzorjev
+                        for (int i = 0; i < senzor.getStevilo_podsenzorjev(); i++) {
+                            EditText temp = new EditText(EditSenzorActivity.this);
+                            temp.setId(i);
+                            temp.setText(senzor.getImena_temperaturnih_senzorjev().get(i));
+                            lin.addView(temp);
+                        }
+
+                    }
+                    else if(!vlaga.isChecked()){
+                        if (stevilo < senzor.getStevilo_podsenzorjev()) {
+                            //ce zmanjsamo stevilo senzorjev
+                            Log.d("test1", "zmanjsal stevilo");
+                            senzor.setStevilo_podsenzorjev(stevilo);
+                            senzor.setImena_temperaturnih_senzorjev(senzor.getImena_temperaturnih_senzorjev().subList(0, stevilo));
+                            Log.d("test1", String.valueOf(senzor.getImena_temperaturnih_senzorjev()));
+                            Log.d("test1", String.valueOf(senzor.getStevilo_podsenzorjev()));
+                        } else {
+                            //ce povecamo stevilo senzorjev
+                            Log.d("test1", "povecal stevilo");
+
+                            for (int i = senzor.getStevilo_podsenzorjev() + 1; i <= stevilo; i++) {
+                                senzor.addImena_temperaturnih_senzorjev(getString(R.string.sensor) + String.valueOf(i));
+                            }
+                            senzor.setStevilo_podsenzorjev(stevilo);
+                            Log.d("test1", String.valueOf(senzor.getImena_temperaturnih_senzorjev()));
+                            Log.d("test1", String.valueOf(senzor.getStevilo_podsenzorjev()));
+                        }
+                        lin.removeAllViews();
+                        //pozenemo zanko za spreminjanje imen temperaturnih podsenzorjev
+                        for (int i = 0; i < senzor.getStevilo_podsenzorjev(); i++) {
+                            EditText temp = new EditText(EditSenzorActivity.this);
+                            temp.setId(i);
+                            temp.setText(senzor.getImena_temperaturnih_senzorjev().get(i));
+                            lin.addView(temp);
+                        }
+                    }
+                    else{
+                        //ponastavmo vrednosti
+                        CharSequence text = getString(R.string.toast_prevec_senzorjev);
+                        int duration = Toast.LENGTH_LONG;
+
+                        Toast toast = Toast.makeText(EditSenzorActivity.this, text, duration);
+                        toast.show();
+                        dolzina.setText(String.valueOf(senzor.getStevilo_podsenzorjev()));
+                    }
+                }
+            }
+        });
+
+        vlaga = (CheckBox) findViewById(R.id.checkBoxH1);
+        vlaga.setChecked(senzor.isPrikazi_vlago());
+        vlaga.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                                             @Override
+                                             public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                                                 if(isChecked && senzor.getStevilo_podsenzorjev() > 1){
+                                                     CharSequence text = getString(R.string.toast_prevec_senzorjev);
+                                                     int duration = Toast.LENGTH_LONG;
+
+                                                     Toast toast = Toast.makeText(EditSenzorActivity.this, text, duration);
+                                                     toast.show();
+                                                     vlaga.setChecked(false);
+                                                 }
+                                                 else{
+                                                     senzor.setPrikazi_vlago(isChecked);
+                                                     vlaga.setChecked(isChecked);
+                                                 }
+
+                                             }
+                                         }
+        );
+
 
         //pozenemo zanko za spreminjanje imen temperaturnih podsenzorjev
         for(int i = 0; i < senzor.getStevilo_podsenzorjev();i++){

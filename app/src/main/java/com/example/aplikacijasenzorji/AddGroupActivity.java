@@ -15,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;
 
@@ -38,13 +39,13 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
         //////////////////////////////////////////////////////////////////////////////////////////////////
         //Dodamo vse gumbe ter text viewe
         //apply button
-        Button nov = (Button) findViewById(R.id.applay_button);
+        FloatingActionButton nov = (FloatingActionButton) findViewById(R.id.applay_button);
         nov.setTag(0);
         nov.setOnClickListener( AddGroupActivity.this);
 
 
         //color picker button
-        Button color_picker = (Button) findViewById(R.id.color_button);
+        FloatingActionButton color_picker = (FloatingActionButton) findViewById(R.id.color_button);
         color_picker.setTag(2);
         color_picker.setOnClickListener(AddGroupActivity.this);
 
