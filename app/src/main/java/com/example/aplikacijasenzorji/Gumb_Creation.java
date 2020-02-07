@@ -157,7 +157,7 @@ public class Gumb_Creation {
         opis.setTextSize(dp10);
 
         //nastavimo font
-        Typeface typeface = ResourcesCompat.getFont(context, R.font.pacifico_font);
+        Typeface typeface = ResourcesCompat.getFont(context, R.font.chunky);
         opis.setTypeface(typeface);
 
 
@@ -415,7 +415,7 @@ public class Gumb_Creation {
         opis.setTextSize(dp10);
 
         //nastavimo font
-        Typeface typeface = ResourcesCompat.getFont(context, R.font.pacifico_font);
+        Typeface typeface = ResourcesCompat.getFont(context, R.font.chunky);
         opis.setTypeface(typeface);
 
 
@@ -449,7 +449,7 @@ public class Gumb_Creation {
         lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
         lp.addRule(RelativeLayout.ALIGN_LEFT,im_forground.getId());
         lp.addRule(RelativeLayout.BELOW,opis.getId());
-        lp.setMargins(dp10,0,0,0);
+        lp.setMargins(dp10,0,0,dp10);
 
         ime.setLayoutParams(lp);
         rl.addView(ime);

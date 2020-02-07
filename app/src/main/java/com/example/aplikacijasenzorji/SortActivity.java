@@ -9,9 +9,11 @@ import android.view.KeyEvent;
 import android.view.View;
 
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.List;
 
-public class SortActivity extends AppCompatActivity {
+public class SortActivity extends AppCompatActivity implements View.OnClickListener {
 
     String filename = "devices.txt";
     String FILEPATH;
@@ -33,6 +35,11 @@ public class SortActivity extends AppCompatActivity {
         //nalozimo config ker neznam drgac spravt configa not k z branjem fila
         FILEPATH = this.getFilesDir() +"/"+filename;
         config.getConfigurationValue(FILEPATH);
+
+
+        FloatingActionButton test = (FloatingActionButton) findViewById(R.id.floatingActionButton2);
+        test.setTag(1);
+        test.setOnClickListener(SortActivity.this);
 
 
         //pripravmo drevo
@@ -190,13 +197,21 @@ public class SortActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if(sprememba) {
-                config.writeConfigurationsValues(FILEPATH);
-            }
             Intent refresh = new Intent(this, MainActivity.class);
             startActivity(refresh);
             this.finish();
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(sprememba) {
+            config.writeConfigurationsValues(FILEPATH);
+        }
+        Intent refresh = new Intent(this, MainActivity.class);
+        startActivity(refresh);
+        this.finish();
+
     }
 }

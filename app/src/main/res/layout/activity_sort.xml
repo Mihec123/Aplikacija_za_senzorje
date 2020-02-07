@@ -5,7 +5,7 @@
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ozadje">
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SortActivity">
@@ -13,7 +13,20 @@
     <com.example.aplikacijasenzorji.DraggableTreeView
         android:id="@+id/dtv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></com.example.aplikacijasenzorji.DraggableTreeView>
+        android:layout_height="match_parent">
+
+    </com.example.aplikacijasenzorji.DraggableTreeView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        app:backgroundTint="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/dtv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_check_black_24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

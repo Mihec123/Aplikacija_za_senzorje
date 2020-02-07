@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private List<RelativeLayout> gumbi_oblika = new ArrayList<>(); //sem bomo shranjevali toggle butne da jim bomo lahko menjal ozadja
     private float SLABATEMP = -99999;
     private boolean koncajLoop = false;
-    private int SLEEP_TIME = 2000;
+    private int SLEEP_TIME = 1000;
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if (temp_prvega_senzorja == SLABATEMP) {
                                 temp_prvega_senzorja_text = "/";
                             } else {
-                                temp_prvega_senzorja_text = String.valueOf(temp_prvega_senzorja)  + (char) 0x00B0 +"C";
+                                temp_prvega_senzorja_text = String.valueOf(temp_prvega_senzorja) + (char) 0x00B0 + "C";
                             }
                             final String temp_prvega_senzorja_text_final = temp_prvega_senzorja_text;
 
@@ -196,11 +196,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     sen.setCommandBuffer(0);
                                     //popravimo comande na 0
                                     sen.setCommand(0);
-                                    CharSequence text = getString(R.string.neuspesen_prizig_senzorja) + sen.getIme();
-                                    int duration = Toast.LENGTH_SHORT;
+                                    MainActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            CharSequence text = getString(R.string.neuspesen_prizig_senzorja) + sen.getIme();
+                                            int duration = Toast.LENGTH_SHORT;
 
-                                    Toast toast = Toast.makeText(MainActivity.this, text, duration);
-                                    toast.show();
+                                            Toast toast = Toast.makeText(MainActivity.this, text, duration);
+                                            toast.show();
+                                        }
+                                    });
                                 }
 
                             } else if (command == -1 && online.second.equals(true)) {
@@ -226,11 +231,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     sen.setCommandBuffer(0);
                                     //CommandBufferList.set(index, 0);
                                     //CommandList.set(index, 0);
-                                    CharSequence text = getString(R.string.neuspeseno_ugasanje_senzorja) + sen.getIme();
-                                    int duration = Toast.LENGTH_SHORT;
+                                    MainActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            CharSequence text = getString(R.string.neuspeseno_ugasanje_senzorja) + sen.getIme();
+                                            int duration = Toast.LENGTH_SHORT;
 
-                                    Toast toast = Toast.makeText(MainActivity.this, text, duration);
-                                    toast.show();
+                                            Toast toast = Toast.makeText(MainActivity.this, text, duration);
+                                            toast.show();
+                                        }
+                                    });
                                 }
                             } else if (command == -1 && online.second.equals(false)) {
                                 //hocmo ugasnt senzor, pa je ze ugasnen
@@ -308,11 +318,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         //ker smo obupal popucamo buffer
                                         sen.setCommand(0);
                                         sen.setCommandBuffer(0);
-                                        CharSequence text = getString(R.string.neuspesen_prizig_senzorja) + sen.getIme();
-                                        int duration = Toast.LENGTH_SHORT;
+                                        MainActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                CharSequence text = getString(R.string.neuspesen_prizig_senzorja) + sen.getIme();
+                                                int duration = Toast.LENGTH_SHORT;
 
-                                        Toast toast = Toast.makeText(MainActivity.this, text, duration);
-                                        toast.show();
+                                                Toast toast = Toast.makeText(MainActivity.this, text, duration);
+                                                toast.show();
+                                            }
+                                        });
                                     }
                                 } else if (command == -1) {
                                     //hocmo ugasnit senozor
@@ -335,11 +350,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         //popravimo bufferlist na 0
                                         sen.setCommand(0);
                                         sen.setCommandBuffer(0);
-                                        CharSequence text = getString(R.string.neuspeseno_ugasanje_senzorja) + sen.getIme();
-                                        int duration = Toast.LENGTH_SHORT;
+                                        MainActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                CharSequence text = getString(R.string.neuspeseno_ugasanje_senzorja) + sen.getIme();
+                                                int duration = Toast.LENGTH_SHORT;
 
-                                        Toast toast = Toast.makeText(MainActivity.this, text, duration);
-                                        toast.show();
+                                                Toast toast = Toast.makeText(MainActivity.this, text, duration);
+                                                toast.show();
+                                            }
+                                        });
                                     }
                                 } else {
                                     //nocmo nc nardit nas ne zanima
@@ -389,11 +409,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     //popravimo comande na 0
                                     sen.setCommand(0);
                                     sen.setCommandBuffer(0);
-                                    CharSequence text = getString(R.string.neuspesen_prizig_senzorja) + sen.getIme();
-                                    int duration = Toast.LENGTH_SHORT;
+                                    MainActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            CharSequence text = getString(R.string.neuspesen_prizig_senzorja) + sen.getIme();
+                                            int duration = Toast.LENGTH_SHORT;
 
-                                    Toast toast = Toast.makeText(MainActivity.this, text, duration);
-                                    toast.show();
+                                            Toast toast = Toast.makeText(MainActivity.this, text, duration);
+                                            toast.show();
+                                        }
+                                    });
                                 }
 
                             } else if (command == -1 && online.second.equals(true)) {
@@ -414,11 +439,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     //popravimo bufferlist na 0
                                     sen.setCommand(0);
                                     sen.setCommandBuffer(0);
-                                    CharSequence text = getString(R.string.neuspeseno_ugasanje_senzorja) + sen.getIme();
-                                    int duration = Toast.LENGTH_SHORT;
+                                    MainActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            CharSequence text = getString(R.string.neuspeseno_ugasanje_senzorja) + sen.getIme();
+                                            int duration = Toast.LENGTH_SHORT;
 
-                                    Toast toast = Toast.makeText(MainActivity.this, text, duration);
-                                    toast.show();
+                                            Toast toast = Toast.makeText(MainActivity.this, text, duration);
+                                            toast.show();
+                                        }
+                                    });
                                 }
                             } else if (command == -1 && online.second.equals(false)) {
                                 //hocmo ugasnt senzor, pa je ze ugasnen
@@ -472,11 +502,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         //ker smo obupal popucamo buffer
                                         sen.setCommand(0);
                                         sen.setCommandBuffer(0);
-                                        CharSequence text = getString(R.string.neuspesen_prizig_senzorja) + sen.getIme();
-                                        int duration = Toast.LENGTH_SHORT;
+                                        MainActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                CharSequence text = getString(R.string.neuspesen_prizig_senzorja) + sen.getIme();
+                                                int duration = Toast.LENGTH_SHORT;
 
-                                        Toast toast = Toast.makeText(MainActivity.this, text, duration);
-                                        toast.show();
+                                                Toast toast = Toast.makeText(MainActivity.this, text, duration);
+                                                toast.show();
+                                            }
+                                        });
                                     }
                                 } else if (command == -1) {
                                     //hocmo ugasnit senozor
@@ -495,11 +530,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         //popravimo bufferlist na 0
                                         sen.setCommand(0);
                                         sen.setCommandBuffer(0);
-                                        CharSequence text = getString(R.string.neuspeseno_ugasanje_senzorja) + sen.getIme();
-                                        int duration = Toast.LENGTH_SHORT;
+                                        MainActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                CharSequence text = getString(R.string.neuspeseno_ugasanje_senzorja) + sen.getIme();
+                                                int duration = Toast.LENGTH_SHORT;
 
-                                        Toast toast = Toast.makeText(MainActivity.this, text, duration);
-                                        toast.show();
+                                                Toast toast = Toast.makeText(MainActivity.this, text, duration);
+                                                toast.show();
+                                            }
+                                        });
                                     }
                                 } else {
                                     //nocmo nc nardit nas ne zanima
@@ -580,7 +620,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
 
                     //damo napise na grupo
-                    final String opis_grupe = "Online:"+ String.valueOf(st_online)+"/" + String.valueOf(grupa.getStevilo_senzorjev()) + ", On:" + String.valueOf(st_prizganih);
+                    final String opis_grupe = "Online:" + String.valueOf(st_online) + "/" + String.valueOf(grupa.getStevilo_senzorjev()) + ", On:" + String.valueOf(st_prizganih);
 
                     final TextView text_grupe = relativeLayout.findViewWithTag("stevila");
                     MainActivity.this.runOnUiThread(new Runnable() {
@@ -680,16 +720,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private void exportFile(){
-        if (!checkPermissionForWriteExtertalStorage()){
+    private void exportFile() {
+        if (!checkPermissionForWriteExtertalStorage()) {
             try {
                 requestPermissionForWriteExtertalStorage();
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else{
+        } else {
             shranifile();
         }
     }
@@ -712,9 +751,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String ime = input.getText().toString();
-                if (!ime.equals("")){
+                if (!ime.equals("")) {
                     boolean uspeli = config.writeConfigurationsValues(getExternalFilesDir(null).getPath() + "/" + ime + ".txt");
-                    if(uspeli){
+                    if (uspeli) {
                         Context context = getApplicationContext();
                         CharSequence text = getString(R.string.sucExport);
                         int duration = Toast.LENGTH_SHORT;
@@ -722,8 +761,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
 
-                    }
-                    else{
+                    } else {
                         Context context = getApplicationContext();
                         CharSequence text = getString(R.string.failExport);
                         int duration = Toast.LENGTH_SHORT;
@@ -731,8 +769,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
                     }
-                }
-                else {
+                } else {
 
                     Context context = getApplicationContext();
                     CharSequence text = "Name can't be empty!";
@@ -754,31 +791,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private void importFile(){
+    private void importFile() {
         DialogProperties properties = new DialogProperties();
         properties.selection_mode = DialogConfigs.SINGLE_MODE;
         properties.selection_type = DialogConfigs.FILE_SELECT;
-        properties.root = new File(DialogConfigs.STORAGE_DIR+"/sdcard");
+        properties.root = new File(DialogConfigs.STORAGE_DIR + "/sdcard");
         properties.error_dir = new File(DialogConfigs.STORAGE_DIR + "/sdcard");
         properties.offset = new File(DialogConfigs.DEFAULT_DIR);
         properties.extensions = null;
-        FilePickerDialog dialog = new FilePickerDialog(MainActivity.this,properties);
+        FilePickerDialog dialog = new FilePickerDialog(MainActivity.this, properties);
         dialog.setTitle("Select a File");
         dialog.setDialogSelectionListener(new DialogSelectionListener() {
             @Override
             public void onSelectedFilePaths(String[] files) {
                 //files is the array of the paths of files selected by the Application User.
                 String new_file = files[0];
-                Log.d("import",new_file);
+                Log.d("import", new_file);
                 Log.d("import", String.valueOf(files));
                 config.getConfigurationValue(new_file);
                 config.writeConfigurationsValues(FILEPATH);
-                Log.d("import","importal");
+                Log.d("import", "importal");
                 Intent refresh = new Intent(MainActivity.this, MainActivity.class);
                 koncajLoop = true; //zakljuci main loop
                 finish();
                 startActivity(refresh);
-                Log.d("import","loudal");
+                Log.d("import", "loudal");
             }
         });
         dialog.show();
