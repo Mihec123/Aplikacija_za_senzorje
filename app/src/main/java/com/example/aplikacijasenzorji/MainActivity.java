@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.text.InputType;
 import android.util.DisplayMetrics;
@@ -42,6 +43,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -714,45 +716,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         thread.start();
     }
 
-
-    public boolean checkPermissionForReadExtertalStorage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int result = this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
-            return result == PackageManager.PERMISSION_GRANTED;
-        }
-        return false;
-    }
-
-    public void requestPermissionForReadExtertalStorage() throws Exception {
-        try {
-            ActivityCompat.requestPermissions((Activity) this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
-    public boolean checkPermissionForWriteExtertalStorage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int result = this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            return result == PackageManager.PERMISSION_GRANTED;
-        }
-        return false;
-    }
-
-    public void requestPermissionForWriteExtertalStorage() throws Exception {
-        try {
-            Log.d("export","smo not v zaprosimo za dovoljenje");
-            ActivityCompat.requestPermissions((Activity) MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d("export", String.valueOf(e));
-            throw e;
-        }
-    }
-
     private GradientDrawable create_gd(int Color) {
         int barva_temna = darken(Color, 0.2f);
         int barva_svetla = enlight(Color, 0.2f);
@@ -793,18 +756,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void exportFile() {
         Log.d("export","v exportu");
-        if (!checkPermissionForWriteExtertalStorage()) {
-            Log.d("export","ni dovoljenja");
-            try {
-                Log.d("export","zaprosimo za dovoljenje");
-                requestPermissionForWriteExtertalStorage();
-
-            } catch (Exception e) {
-                Log.d("export","neki slo narobe");
-                e.printStackTrace();
-            }
-        } else {
-            Log.d("export","gremo v shrani");
+        if (ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    1);
+        }
+        else{
             shranifile();
         }
     }
@@ -813,6 +772,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final String m_Text = "devices"; //default ime je devices
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Name of the file");
+
+        File f = new File(DialogConfigs.STORAGE_DIR + "/sdcard/iSense" );
+        if(f.isDirectory()) {
+            //ce obstaja nc
+        }
+        else{
+            //sicer ga naredimo
+            f.mkdir();
+        }
 
 // Set up the input
         EditText input1 = new EditText(this);
@@ -884,6 +852,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String new_file = files[0];
                 Log.d("import", new_file);
                 Log.d("import", String.valueOf(files));
+                config = new Config();
                 config.getConfigurationValue(new_file);
                 config.writeConfigurationsValues(FILEPATH);
                 Log.d("import", "importal");
@@ -895,6 +864,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         dialog.show();
+    }
+
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     @Override
@@ -1057,6 +1031,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(MainActivity.this, "Permission denied to write your External storage", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     @Override

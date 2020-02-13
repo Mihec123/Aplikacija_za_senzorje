@@ -65,25 +65,22 @@
             android:id="@+id/applay_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="88dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="40dp"
             app:backgroundTint="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/test_button"
             app:srcCompat="@drawable/ic_check_black_24dp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/test_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="200dp"
             app:backgroundTint="#FFFFFF"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/applay_button"
-            app:layout_constraintHorizontal_bias="0.435"
-            app:layout_constraintStart_toEndOf="@+id/color_button"
+            app:layout_anchorGravity="bottom|center_vertical"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checkBoxH"
             app:srcCompat="@drawable/ic_network_check_black_48dp" />
 
         <CheckBox
@@ -121,12 +118,11 @@
             android:id="@+id/color_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="88dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="40dp"
             android:src="@drawable/rgb_color"
             app:backgroundTint="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toStartOf="@+id/test_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

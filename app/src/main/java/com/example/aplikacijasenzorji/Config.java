@@ -173,9 +173,12 @@ public final class Config{
             int dolzinaGrup = Integer.parseInt(prop.getProperty("stevilo_grup"));
             Log.i(TAG, "prezvel dolzine");
             //loadamo vrstni red+ mal motoviljenja da pretvormo v int vrednosti pa pravi tip lista
+            Log.i(TAG, String.valueOf(prop.getProperty("vrstni_red").isEmpty()));
+            if(!prop.getProperty("vrstni_red").isEmpty()){
             String[] temp = prop.getProperty("vrstni_red").split(",,,");
             List<String> temp1= Arrays.asList(temp);
             vrstni_red = StringtoInt(temp1);
+            }
 
             //pogledamo za vsak senzor lastnosti in ustavrimo nov razred senzor za vsakega iz med njih
             for(int i= 0;i < dolzinaSenzorjev; i++) {

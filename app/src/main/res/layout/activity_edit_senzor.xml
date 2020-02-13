@@ -62,26 +62,24 @@
             android:id="@+id/applay_button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="88dp"
+            android:layout_marginStart="40dp"
             android:layout_marginBottom="16dp"
-            app:srcCompat="@drawable/ic_check_black_24dp"
             app:backgroundTint="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/test_button1"
+            app:srcCompat="@drawable/ic_check_black_24dp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/test_button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
-            app:srcCompat="@drawable/ic_network_check_black_48dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:backgroundTint="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/applay_button1"
-            app:layout_constraintHorizontal_bias="0.435"
-            app:layout_constraintStart_toEndOf="@+id/color_button1" />
+            app:srcCompat="@drawable/ic_network_check_black_48dp"
+            tools:layout_editor_absoluteX="152dp" />
 
         <CheckBox
             android:id="@+id/checkBoxH1"
@@ -116,19 +114,21 @@
             android:id="@+id/color_button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="88dp"
+            android:layout_marginEnd="40dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/rgb_color"
             android:src="@drawable/rgb_color"
             app:backgroundTint="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toStartOf="@+id/test_button1" />
 
         <ScrollView
             android:id="@+id/scrollView3"
-            android:layout_width="396dp"
+            android:layout_width="match_parent"
             android:layout_height="226dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="21dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toTopOf="@+id/test_button1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -139,6 +139,7 @@
                 android:id="@+id/imena_podsenzorjev"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
                 android:orientation="vertical" />
         </ScrollView>
 

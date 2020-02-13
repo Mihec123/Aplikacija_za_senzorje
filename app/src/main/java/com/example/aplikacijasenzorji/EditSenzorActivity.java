@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -128,6 +129,7 @@ public class EditSenzorActivity extends AppCompatActivity implements View.OnClic
                         //pozenemo zanko za spreminjanje imen temperaturnih podsenzorjev
                         for (int i = 0; i < senzor.getStevilo_podsenzorjev(); i++) {
                             EditText temp = new EditText(EditSenzorActivity.this);
+                            temp.setGravity(Gravity.CENTER_HORIZONTAL);
                             temp.setId(i);
                             temp.setText(senzor.getImena_temperaturnih_senzorjev().get(i));
                             lin.addView(temp);
@@ -157,6 +159,7 @@ public class EditSenzorActivity extends AppCompatActivity implements View.OnClic
                         //pozenemo zanko za spreminjanje imen temperaturnih podsenzorjev
                         for (int i = 0; i < senzor.getStevilo_podsenzorjev(); i++) {
                             EditText temp = new EditText(EditSenzorActivity.this);
+                            temp.setGravity(Gravity.CENTER_HORIZONTAL);
                             temp.setId(i);
                             temp.setText(senzor.getImena_temperaturnih_senzorjev().get(i));
                             lin.addView(temp);
@@ -202,6 +205,7 @@ public class EditSenzorActivity extends AppCompatActivity implements View.OnClic
         //pozenemo zanko za spreminjanje imen temperaturnih podsenzorjev
         for(int i = 0; i < senzor.getStevilo_podsenzorjev();i++){
             EditText temp = new EditText(this);
+            temp.setGravity(Gravity.CENTER_HORIZONTAL);
             temp.setId(i);
             temp.setText(senzor.getImena_temperaturnih_senzorjev().get(i));
             lin.addView(temp);
@@ -215,8 +219,18 @@ public class EditSenzorActivity extends AppCompatActivity implements View.OnClic
         if (str.equals("0")) {
             //preverimo najprej ce smo v vsa polja nekaj napisali
             boolean vsa_polja_izpolnjena = (!String.valueOf(ime.getText()).equals("") && !String.valueOf(ip.getText()).equals("") && !String.valueOf(token.getText()).equals(""));
+            ////////////////////////////////
+            //preverimo ce majo vsi podsenzorji imena
+            boolean vsa_podimena = true;
+            for(int i = 0; i < senzor.getStevilo_podsenzorjev();i++){
+                EditText temp = findViewById(i);
+
+                if(String.valueOf(temp.getText()).equals("")){
+                    vsa_podimena = false;
+                }
+            }
             //prevermo se ce mamo vlago mamo lahko najvec en senzor za temperaturo
-            if (vsa_polja_izpolnjena) {
+            if (vsa_polja_izpolnjena && vsa_podimena) {
 
                 //popravimo senzor in ga shranimo
 
