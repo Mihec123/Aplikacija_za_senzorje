@@ -119,9 +119,11 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        Intent refresh = new Intent(this, MainActivity.class);
-        startActivity(refresh);
-        this.finish();
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            Intent refresh = new Intent(this, MainActivity.class);
+            startActivity(refresh);
+            this.finish();
+        }
         return super.onKeyDown(keyCode, event);
     }
 

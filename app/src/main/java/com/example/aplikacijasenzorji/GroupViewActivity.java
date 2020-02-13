@@ -38,7 +38,7 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
     private float SLABATEMP = -99999;
     private List<RelativeLayout> gumbi_oblika = new ArrayList<>(); //sem bomo shranjevali toggle butne da jim bomo lahko menjal ozadja
     private boolean koncajLoop = false;
-    private int SLEEP_TIME = 2000;
+    private int SLEEP_TIME = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +89,7 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
         okno.addView(gumbi.emptySenzor(scale,this));
 
 
-        run_main();
+        //run_main();
     }
 
 
@@ -97,7 +97,7 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
         public void run() {
             while (!koncajLoop) {
                 Log.i("run_del", "zacel zanko");
-                for (Senzor sen : grupa.getSenzorji()) {
+                for (final Senzor sen : grupa.getSenzorji()) {
                     //senzor
                     //index pozicije senzorja
                     int index = grupa.getSenzorji().indexOf(sen);
@@ -112,8 +112,12 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
 //                        temp_image.setBackgroundResource(R.drawable.ic_wifi_black_24dp);
 
                         //pobarvamo senzor
-                        View view = relativeLayout.findViewWithTag("barva");
-                        view.setBackground(create_gd(sen.getBarva()));
+                        final View view = relativeLayout.findViewWithTag("barva");
+                        GroupViewActivity.this.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                view.setBackground(create_gd(sen.getBarva()));
+                                                            }});
 
                         //probamo dobit temperaturo
 
@@ -151,9 +155,13 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                                 sen.setCommand(0);
                                 //popravmo da ne rabmo vec przgat
                                 //spremenimo barvo gumba
-                                ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
-                                temp_toggle.setChecked(true);
-                                temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
+                                final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
+                                GroupViewActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        temp_toggle.setChecked(true);
+                                        temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
+                                    }});
 
                             } else if (sen.getCommandBuffer() < BUFFER) {
                                 //nismo uspel prizgat ampak se bomo poskusal
@@ -164,11 +172,15 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                                 sen.setCommandBuffer(0);
                                 //popravimo comande na 0
                                 sen.setCommand(0);
-                                CharSequence text = getString(R.string.neuspesen_prizig_senzorja) + sen.getIme();
-                                int duration = Toast.LENGTH_SHORT;
+                                final CharSequence text = getString(R.string.neuspesen_prizig_senzorja) + sen.getIme();
+                                final int duration = Toast.LENGTH_SHORT;
 
-                                Toast toast = Toast.makeText(GroupViewActivity.this, text, duration);
-                                toast.show();
+                                GroupViewActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast toast = Toast.makeText(GroupViewActivity.this, text, duration);
+                                        toast.show();
+                                    }});
                             }
 
                         } else if (command == -1 && online.second.equals(true)) {
@@ -180,9 +192,13 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                                 sen.setCommand(0);
                                 sen.setCommandBuffer(0);
                                 //spremenimo barvo gumba
-                                ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
-                                temp_toggle.setBackgroundResource(R.drawable.gumb);
-                                temp_toggle.setChecked(false);
+                                final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
+                                GroupViewActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        temp_toggle.setBackgroundResource(R.drawable.gumb);
+                                        temp_toggle.setChecked(false);
+                                    }});
 
                             } else if (sen.getCommandBuffer() < BUFFER) {
                                 //nismo uspel ugasnt ampak se bomo poskusal
@@ -194,20 +210,28 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                                 sen.setCommandBuffer(0);
                                 //CommandBufferList.set(index, 0);
                                 //CommandList.set(index, 0);
-                                CharSequence text = getString(R.string.neuspeseno_ugasanje_senzorja) + sen.getIme();
-                                int duration = Toast.LENGTH_SHORT;
+                                final CharSequence text = getString(R.string.neuspeseno_ugasanje_senzorja) + sen.getIme();
+                                final int duration = Toast.LENGTH_SHORT;
 
-                                Toast toast = Toast.makeText(GroupViewActivity.this, text, duration);
-                                toast.show();
+                                GroupViewActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast toast = Toast.makeText(GroupViewActivity.this, text, duration);
+                                        toast.show();
+                                    }});
                             }
                         } else if (command == -1 && online.second.equals(false)) {
                             //hocmo ugasnt senzor, pa je ze ugasnen
                             Log.d("run_del", "hocmo ugasnt, ni prizgan");
 
                             //pocistt mormo samo buffer pa gumbe pobarvat
-                            ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
-                            temp_toggle.setBackgroundResource(R.drawable.gumb);
-                            temp_toggle.setChecked(false);
+                            final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
+                            GroupViewActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    temp_toggle.setBackgroundResource(R.drawable.gumb);
+                                    temp_toggle.setChecked(false);
+                                }});
                             //pocistmo buffer
                             //popravmo da ne rabmo vec ugasnt
                             sen.setCommand(0);
@@ -217,9 +241,13 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                             Log.d("run_del", "hocmo prizgat, je prizgan");
 
                             //pocistt mormo samo buffer pa gumbe pobarvat
-                            ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
-                            temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
-                            temp_toggle.setChecked(true);
+                            final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
+                            GroupViewActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
+                                    temp_toggle.setChecked(true);
+                                }});
                             //pocistmo buffer
                             //popravmo da ne rabmo vec przgat
                             sen.setCommand(0);
@@ -230,15 +258,23 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                             if (online.second.equals(true)) {
                                 Log.d("run_del", "nas ne zanima je prizgan");
                                 //more bit pobarvan na zeleno
-                                ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
-                                temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
-                                temp_toggle.setChecked(true);
+                                final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
+                                GroupViewActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
+                                        temp_toggle.setChecked(true);
+                                    }});
                             } else {
                                 Log.d("run_del", "nas ne zanima je ugasnjen");
                                 //more bit pobarvan na sivo
-                                ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
-                                temp_toggle.setBackgroundResource(R.drawable.gumb);
-                                temp_toggle.setChecked(false);
+                                final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
+                                GroupViewActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        temp_toggle.setBackgroundResource(R.drawable.gumb);
+                                        temp_toggle.setChecked(false);
+                                    }});
                             }
 
                         }
@@ -264,9 +300,13 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                                     sen.setCommand(0);
                                     sen.setCommandBuffer(0);
                                     //spremenimo barvo gumba
-                                    ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
-                                    temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
-                                    temp_toggle.setChecked(true);
+                                    final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
+                                    GroupViewActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
+                                            temp_toggle.setChecked(true);
+                                        }});
 
                                 } else if (sen.getCommandBuffer() < BUFFER) {
                                     //nismo uspel prizgat ampak se bomo poskusal
@@ -277,11 +317,15 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                                     //ker smo obupal popucamo buffer
                                     sen.setCommand(0);
                                     sen.setCommandBuffer(0);
-                                    CharSequence text = getString(R.string.neuspesen_prizig_senzorja) + sen.getIme();
-                                    int duration = Toast.LENGTH_SHORT;
+                                    final CharSequence text = getString(R.string.neuspesen_prizig_senzorja) + sen.getIme();
+                                    final int duration = Toast.LENGTH_SHORT;
 
-                                    Toast toast = Toast.makeText(GroupViewActivity.this, text, duration);
-                                    toast.show();
+                                    GroupViewActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast toast = Toast.makeText(GroupViewActivity.this, text, duration);
+                                            toast.show();
+                                        }});
                                 }
                             } else if (command == -1) {
                                 //hocmo ugasnit senozor
@@ -292,9 +336,13 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                                     sen.setCommandBuffer(0);
 
                                     //spremenimo barvo gumba
-                                    ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
-                                    temp_toggle.setBackgroundResource(R.drawable.gumb);
-                                    temp_toggle.setChecked(false);
+                                    final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(sen.getId()) + ",onoff");
+                                    GroupViewActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            temp_toggle.setBackgroundResource(R.drawable.gumb);
+                                            temp_toggle.setChecked(false);
+                                        }});
 
                                 } else if (sen.getCommandBuffer() < BUFFER) {
                                     //nismo uspel ugasnt ampak se bomo poskusal
@@ -304,11 +352,16 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
                                     //popravimo bufferlist na 0
                                     sen.setCommand(0);
                                     sen.setCommandBuffer(0);
-                                    CharSequence text = getString(R.string.neuspeseno_ugasanje_senzorja) + sen.getIme();
-                                    int duration = Toast.LENGTH_SHORT;
+                                    final CharSequence text = getString(R.string.neuspeseno_ugasanje_senzorja) + sen.getIme();
+                                    final int duration = Toast.LENGTH_SHORT;
 
-                                    Toast toast = Toast.makeText(GroupViewActivity.this, text, duration);
-                                    toast.show();
+
+                                    GroupViewActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast toast = Toast.makeText(GroupViewActivity.this, text, duration);
+                                            toast.show();
+                                        }});
                                 }
                             } else {
                                 //nocmo nc nardit nas ne zanima
@@ -484,10 +537,29 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        Intent refresh = new Intent(this, MainActivity.class);
-        koncajLoop = true;
-        startActivity(refresh);
-        this.finish();
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            Intent refresh = new Intent(this, MainActivity.class);
+            koncajLoop = true;
+            startActivity(refresh);
+            this.finish();
+        }
         return super.onKeyDown(keyCode, event);
+    }
+
+
+
+    @Override
+    protected void onStop() {
+        Log.d("ACTIV1","stop");
+        koncajLoop = true;
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d("ACTIV1","start");
+        koncajLoop = false;
+        run_main();
+        super.onStart();
     }
 }

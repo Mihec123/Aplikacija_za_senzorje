@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         config = new Config();
 
         FILEPATH = this.getFilesDir() + "/" + filename;
+        Log.d("pot",FILEPATH);
 
         //poberemo konfiguracijo, ce ta ostaja sicer config ostane nova konfiguracija
         config.getConfigurationValue(FILEPATH);
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         //zacnemo while zanko za pregled senzorjev in grup
-        run_main();
+        //run_main();
 
 
     }
@@ -144,8 +145,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                            temp_image.setBackgroundResource(R.drawable.ic_wifi_black_24dp);
 
                             //pobarvamo senzor
-                            View view = relativeLayout.findViewWithTag("barva");
+                            final View view = relativeLayout.findViewWithTag("barva");
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
                             view.setBackground(create_gd(sen.getBarva()));
+                                }
+                            });
+                            Log.d("run_del", "senzor: " + String.valueOf(id) + " pobarval senzor");
 
                             //probamo dobit temperaturo
 
@@ -163,12 +170,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             //ui updati morjo bit na main threadu zato kle text nastavmo z main threadom
 
+                            Log.d("run_del", "senzor: " + String.valueOf(id) + " hocmo popravt temp");
                             MainActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     text_temperatura.setText(temp_prvega_senzorja_text_final);
                                 }
                             });
+                            Log.d("run_del", "senzor: " + String.valueOf(id) + " prpravl temp");
 
                             //StatusBufferList.set(index, 1);
                             sen.setStatusBuffer(1);
@@ -183,9 +192,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     sen.setCommand(0);
                                     //popravmo da ne rabmo vec przgat
                                     //spremenimo barvo gumba
-                                    ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
-                                    temp_toggle.setChecked(true);
-                                    temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
+                                    final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
+                                    MainActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            temp_toggle.setChecked(true);
+                                            temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
+                                        }
+                                    });
 
                                 } else if (sen.getCommandBuffer() < BUFFER) {
                                     //nismo uspel prizgat ampak se bomo poskusal
@@ -217,9 +231,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     sen.setCommand(0);
                                     sen.setCommandBuffer(0);
                                     //spremenimo barvo gumba
-                                    ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
-                                    temp_toggle.setBackgroundResource(R.drawable.gumb);
-                                    temp_toggle.setChecked(false);
+                                    final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
+                                    MainActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            temp_toggle.setBackgroundResource(R.drawable.gumb);
+                                            temp_toggle.setChecked(false);
+                                        }
+                                    });
 
                                 } else if (sen.getCommandBuffer() < BUFFER) {
                                     //nismo uspel ugasnt ampak se bomo poskusal
@@ -247,9 +266,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 Log.d("run_del", "hocmo ugasnt, ni prizgan");
 
                                 //pocistt mormo samo buffer pa gumbe pobarvat
-                                ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
-                                temp_toggle.setBackgroundResource(R.drawable.gumb);
-                                temp_toggle.setChecked(false);
+                                final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
+                                MainActivity.this.runOnUiThread(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        temp_toggle.setBackgroundResource(R.drawable.gumb);
+                                                                        temp_toggle.setChecked(false);
+                                                                    }
+                                });
                                 //pocistmo buffer
                                 //popravmo da ne rabmo vec ugasnt
                                 sen.setCommand(0);
@@ -259,9 +283,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 Log.d("run_del", "hocmo prizgat, je prizgan");
 
                                 //pocistt mormo samo buffer pa gumbe pobarvat
-                                ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
-                                temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
-                                temp_toggle.setChecked(true);
+                                final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
+                                MainActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
+                                        temp_toggle.setChecked(true);
+                                    }});
                                 //pocistmo buffer
                                 //popravmo da ne rabmo vec przgat
                                 sen.setCommand(0);
@@ -272,15 +300,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 if (online.second.equals(true)) {
                                     Log.d("run_del", "nas ne zanima je prizgan");
                                     //more bit pobarvan na zeleno
-                                    ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
-                                    temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
-                                    temp_toggle.setChecked(true);
+                                    final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
+                                    MainActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
+                                            temp_toggle.setChecked(true);
+                                        }});
                                 } else {
                                     Log.d("run_del", "nas ne zanima je ugasnjen");
                                     //more bit pobarvan na sivo
-                                    ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
-                                    temp_toggle.setBackgroundResource(R.drawable.gumb);
-                                    temp_toggle.setChecked(false);
+                                    final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
+                                    MainActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            temp_toggle.setBackgroundResource(R.drawable.gumb);
+                                            temp_toggle.setChecked(false);
+                                        }
+                                    });
+
                                 }
 
                             }
@@ -305,9 +343,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         sen.setCommand(0);
                                         sen.setCommandBuffer(0);
                                         //spremenimo barvo gumba
-                                        ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
-                                        temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
-                                        temp_toggle.setChecked(true);
+                                        final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
+                                        MainActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
+                                                temp_toggle.setChecked(true);
+                                            }});
 
                                     } else if (sen.getCommandBuffer() < BUFFER) {
                                         //nismo uspel prizgat ampak se bomo poskusal
@@ -338,9 +380,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         sen.setCommandBuffer(0);
 
                                         //spremenimo barvo gumba
-                                        ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
-                                        temp_toggle.setBackgroundResource(R.drawable.gumb);
-                                        temp_toggle.setChecked(false);
+                                        final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
+                                        MainActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                temp_toggle.setBackgroundResource(R.drawable.gumb);
+                                                temp_toggle.setChecked(false);
+                                            }});
 
                                     } else if (sen.getCommandBuffer() < BUFFER) {
                                         //nismo uspel ugasnt ampak se bomo poskusal
@@ -583,38 +629,61 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                        ImageView temp_image = relativeLayout.findViewWithTag("status");
 //                        temp_image.setBackgroundResource(R.drawable.ic_wifi_black_24dp);
                         //pobarvamo grupo
-                        View view = relativeLayout.findViewWithTag("barva");
-                        view.setBackground(create_gd(grupa.getBarva()));
+                        final View view = relativeLayout.findViewWithTag("barva");
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                view.setBackground(create_gd(grupa.getBarva()));
+                                                            }});
                         if (st_prizganih == 0) {
                             Log.d("run_del", "grupa: " + String.valueOf(id) + " st_ptizganih je 0");
                             //pobarvamo gumb na sivo in nastavimo toggle button na off
-                            ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
-                            temp_toggle.setChecked(false);
-                            temp_toggle.setBackgroundResource(R.drawable.gumb);
+                            final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    temp_toggle.setChecked(false);
+                                    temp_toggle.setBackgroundResource(R.drawable.gumb);
+                                }});
                         } else if (st_prizganih == grupa.getStevilo_senzorjev() && grupa.getStevilo_senzorjev() != 0) {
                             //pobarvamo gumb na zeleno in nastavimo toggle button na on
-                            ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
+                            final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
                             temp_toggle.setChecked(true);
-                            temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);
+                            temp_toggle.setBackgroundResource(R.drawable.gumb_zelen);}});
                         } else if (st_prizganih > 0 && grupa.getStevilo_senzorjev() != 0) {
                             //pobarvamo senzor na modro in nastavimo toggle button na on
-                            ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
-                            temp_toggle.setChecked(true);
-                            temp_toggle.setBackgroundResource(R.drawable.gumb_moder);
+                            final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    temp_toggle.setChecked(true);
+                                    temp_toggle.setBackgroundResource(R.drawable.gumb_moder);
+                                }});
                         }
                     } else {
                         //recemo da je grupa offline
 //                        ImageView temp_image = relativeLayout.findViewWithTag("status");
 //                        temp_image.setBackgroundResource(R.drawable.ic_signal_wifi_off_black_24dp);
                         //pobarvamo grupo
-                        View view = relativeLayout.findViewWithTag("barva");
-                        view.setBackground(create_gd(Color.GRAY));
+                        final View view = relativeLayout.findViewWithTag("barva");
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                view.setBackground(create_gd(Color.GRAY));
+                                                            }});
                         //recemo da ni noben prizgan ker ne vemo
                         st_prizganih = 0;
 
-                        ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
-                        temp_toggle.setChecked(false);
-                        temp_toggle.setBackgroundResource(R.drawable.gumb);
+                        final ToggleButton temp_toggle = relativeLayout.findViewWithTag(String.valueOf(id) + ",onoff");
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                temp_toggle.setChecked(false);
+                                                                temp_toggle.setBackgroundResource(R.drawable.gumb);
+                                                            }});
 
 
                     }
@@ -674,10 +743,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void requestPermissionForWriteExtertalStorage() throws Exception {
         try {
-            ActivityCompat.requestPermissions((Activity) this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+            Log.d("export","smo not v zaprosimo za dovoljenje");
+            ActivityCompat.requestPermissions((Activity) MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     1);
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d("export", String.valueOf(e));
             throw e;
         }
     }
@@ -721,14 +792,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void exportFile() {
+        Log.d("export","v exportu");
         if (!checkPermissionForWriteExtertalStorage()) {
+            Log.d("export","ni dovoljenja");
             try {
+                Log.d("export","zaprosimo za dovoljenje");
                 requestPermissionForWriteExtertalStorage();
 
             } catch (Exception e) {
+                Log.d("export","neki slo narobe");
                 e.printStackTrace();
             }
         } else {
+            Log.d("export","gremo v shrani");
             shranifile();
         }
     }
@@ -752,7 +828,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 String ime = input.getText().toString();
                 if (!ime.equals("")) {
-                    boolean uspeli = config.writeConfigurationsValues(getExternalFilesDir(null).getPath() + "/" + ime + ".txt");
+                    boolean uspeli = config.writeConfigurationsValues(DialogConfigs.STORAGE_DIR + "/sdcard/iSense/" + ime + ".txt");
                     if (uspeli) {
                         Context context = getApplicationContext();
                         CharSequence text = getString(R.string.sucExport);
@@ -981,5 +1057,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d("ACTIV1","stop");
+        koncajLoop = true;
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d("ACTIV1","start");
+        koncajLoop = false;
+        run_main();
+        super.onStart();
     }
 }

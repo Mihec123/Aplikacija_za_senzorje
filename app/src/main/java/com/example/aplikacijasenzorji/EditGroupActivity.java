@@ -109,13 +109,15 @@ public class EditGroupActivity extends AppCompatActivity implements View.OnClick
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        Intent intent = new Intent(this, GroupViewActivity.class);
-        //nardimo nov bundle da loh not damo id grupe
-        Bundle bundle = new Bundle();
-        bundle.putInt("id", id_grupe);
-        intent.putExtras(bundle);
-        startActivity(intent);
-        this.finish();
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            Intent intent = new Intent(this, GroupViewActivity.class);
+            //nardimo nov bundle da loh not damo id grupe
+            Bundle bundle = new Bundle();
+            bundle.putInt("id", id_grupe);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            this.finish();
+        }
         return super.onKeyDown(keyCode, event);
     }
 }

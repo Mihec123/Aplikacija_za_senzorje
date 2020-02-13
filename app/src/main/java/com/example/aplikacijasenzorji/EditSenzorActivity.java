@@ -52,6 +52,8 @@ public class EditSenzorActivity extends AppCompatActivity implements View.OnClic
         id_grupe = bundle.getInt("id_grupe");
 
         FILEPATH = this.getFilesDir() +"/"+filename;
+
+
         config.getConfigurationValue(FILEPATH);
         senzor = config.getSenzorji().get(config.getIdSenzor().indexOf(id_senzorja));
 
@@ -314,14 +316,16 @@ public class EditSenzorActivity extends AppCompatActivity implements View.OnClic
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        Intent intent = new Intent(this, SensorViewActivity.class);
-        //nardimo nov bundle da loh not damo id senzorja
-        Bundle bundle = new Bundle();
-        bundle.putInt("id", id_senzorja);
-        bundle.putInt("id_grupe", id_grupe);
-        intent.putExtras(bundle);
-        startActivity(intent);
-        this.finish();
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            Intent intent = new Intent(this, SensorViewActivity.class);
+            //nardimo nov bundle da loh not damo id senzorja
+            Bundle bundle = new Bundle();
+            bundle.putInt("id", id_senzorja);
+            bundle.putInt("id_grupe", id_grupe);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            this.finish();
+        }
         return super.onKeyDown(keyCode, event);
     }
 }

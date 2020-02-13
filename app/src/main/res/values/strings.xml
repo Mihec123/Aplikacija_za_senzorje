@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AplikacijaSenzorji</string>
+    <string name="app_name">iSense</string>
     <string name="exportD">Export</string>
     <string name="sucExport">Successfuly exported file!</string>
     <string name="failExport">Failed to export file!</string>

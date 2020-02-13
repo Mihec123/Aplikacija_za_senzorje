@@ -266,9 +266,10 @@ public class Gumb_Creation {
         lp = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT );
-        lp.addRule(RelativeLayout.CENTER_VERTICAL);
+        //lp.addRule(RelativeLayout.CENTER_VERTICAL);
+        lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
         lp.addRule(RelativeLayout.LEFT_OF,OnOff.getId());
-        lp.setMargins(0,0,dp10,0);
+        lp.setMargins(0,dp10,dp10,0);
 
         temperatura.setLayoutParams(lp);
         rl.addView(temperatura);

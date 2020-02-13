@@ -85,46 +85,46 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
         barva.setBackgroundColor(senzor.getBarva());
         Log.d("onClick", "prezvel barvo");
 
-        lin = findViewById(R.id.linear);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-
-        //dodamo senzorje in pozenemo loop da popravlja vrednosti
-        if (senzor.isPrikazi_vlago()) {
-            //prikazat mormo vlago + mogoce en senzor
-            if (senzor.getStevilo_podsenzorjev() > 0) {
-                //mamo vlago + en senzor
-                //ker je sam en senzor ga nastavmo na id 0
-                RelativeLayout temp = senzor_view(0);
-                lin.addView(temp);
-                //ker je sam en senzor za vlago ga nastavmo na id 1
-                temp = senzor_view_vlaga(1);
-                lin.addView(temp);
-                run_main2();
-
-            } else {
-                //mamo samo vlago
-                //nastavmo id vlage na 1
-                RelativeLayout temp = senzor_view_vlaga(1);
-                lin.addView(temp);
-                Log.d("senzor_main", "pozeni main3");
-                run_main3();
-            }
-        } else {
-            //nimamo vlage imamo samo senzorje
-            for (int i = 0; i < senzor.getStevilo_podsenzorjev(); i++) {
-                RelativeLayout temp = senzor_view(i);
-                lin.addView(temp);
-            }
-            //ker jih imamo lahko veliko dodamo na koncu se prazno vrstico da lahko scroolamo mal nizi
-            View view = new View(this);
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                    (int) (200 * scale + 0.5f), //60dp
-                    (int) (200 * scale + 0.5f));//60dp
-            view.setLayoutParams(lp);
-            lin.addView(view);
-            run_main1();
-        }
+//        lin = findViewById(R.id.linear);
+//
+//        ////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//        //dodamo senzorje in pozenemo loop da popravlja vrednosti
+//        if (senzor.isPrikazi_vlago()) {
+//            //prikazat mormo vlago + mogoce en senzor
+//            if (senzor.getStevilo_podsenzorjev() > 0) {
+//                //mamo vlago + en senzor
+//                //ker je sam en senzor ga nastavmo na id 0
+//                RelativeLayout temp = senzor_view(0);
+//                lin.addView(temp);
+//                //ker je sam en senzor za vlago ga nastavmo na id 1
+//                temp = senzor_view_vlaga(1);
+//                lin.addView(temp);
+//                run_main2();
+//
+//            } else {
+//                //mamo samo vlago
+//                //nastavmo id vlage na 1
+//                RelativeLayout temp = senzor_view_vlaga(1);
+//                lin.addView(temp);
+//                Log.d("senzor_main", "pozeni main3");
+//                run_main3();
+//            }
+//        } else {
+//            //nimamo vlage imamo samo senzorje
+//            for (int i = 0; i < senzor.getStevilo_podsenzorjev(); i++) {
+//                RelativeLayout temp = senzor_view(i);
+//                lin.addView(temp);
+//            }
+//            //ker jih imamo lahko veliko dodamo na koncu se prazno vrstico da lahko scroolamo mal nizi
+//            View view = new View(this);
+//            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+//                    (int) (200 * scale + 0.5f), //60dp
+//                    (int) (200 * scale + 0.5f));//60dp
+//            view.setLayoutParams(lp);
+//            lin.addView(view);
+//            run_main1();
+//        }
 
         //sprehajamo se cez senzorje in nastavljamo temperature ali vlago
 
@@ -488,23 +488,81 @@ public class SensorViewActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
 
-        if (id_grupe == 0) {
-            //prsli iz main screena
-            Intent refresh = new Intent(this, MainActivity.class);
-            koncajLoop = true;
-            startActivity(refresh);
-            this.finish();
-        } else {
-            //prsli iz neke grupe
-            Intent refresh = new Intent(this, GroupViewActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putInt("id", id_grupe);
-            refresh.putExtras(bundle);
-            koncajLoop = true;
-            startActivity(refresh);
-            this.finish();
+            if (id_grupe == 0) {
+                //prsli iz main screena
+                Intent refresh = new Intent(this, MainActivity.class);
+                koncajLoop = true;
+                startActivity(refresh);
+                this.finish();
+            } else {
+                //prsli iz neke grupe
+                Intent refresh = new Intent(this, GroupViewActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("id", id_grupe);
+                refresh.putExtras(bundle);
+                koncajLoop = true;
+                startActivity(refresh);
+                this.finish();
+            }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d("ACTIV1","stop");
+        koncajLoop = true;
+        lin = findViewById(R.id.linear);
+        lin.removeAllViews();
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d("ACTIV1","start");
+        koncajLoop = false;
+        lin = findViewById(R.id.linear);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //dodamo senzorje in pozenemo loop da popravlja vrednosti
+        if (senzor.isPrikazi_vlago()) {
+            //prikazat mormo vlago + mogoce en senzor
+            if (senzor.getStevilo_podsenzorjev() > 0) {
+                //mamo vlago + en senzor
+                //ker je sam en senzor ga nastavmo na id 0
+                RelativeLayout temp = senzor_view(0);
+                lin.addView(temp);
+                //ker je sam en senzor za vlago ga nastavmo na id 1
+                temp = senzor_view_vlaga(1);
+                lin.addView(temp);
+                run_main2();
+
+            } else {
+                //mamo samo vlago
+                //nastavmo id vlage na 1
+                RelativeLayout temp = senzor_view_vlaga(1);
+                lin.addView(temp);
+                Log.d("senzor_main", "pozeni main3");
+                run_main3();
+            }
+        } else {
+            //nimamo vlage imamo samo senzorje
+            for (int i = 0; i < senzor.getStevilo_podsenzorjev(); i++) {
+                RelativeLayout temp = senzor_view(i);
+                lin.addView(temp);
+            }
+            //ker jih imamo lahko veliko dodamo na koncu se prazno vrstico da lahko scroolamo mal nizi
+            View view = new View(this);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                    (int) (200 * scale + 0.5f), //60dp
+                    (int) (200 * scale + 0.5f));//60dp
+            view.setLayoutParams(lp);
+            lin.addView(view);
+            run_main1();
+        }
+        super.onStart();
     }
 }
