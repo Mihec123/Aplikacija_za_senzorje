@@ -108,6 +108,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Grupa grupa;
         Senzor senzor;
         RelativeLayout temp;
+
+        //dodamo se en prazen zgori da je mal lufta
+        temp = gumbi.emptySenzor(scale,this);
+        okno.addView(temp);
         for (int stevilo : config.getVrstni_red()) {
             if (stevilo < 0) {
                 grupa = config.getGrupe().get(config.getIdGrup().indexOf(stevilo));
