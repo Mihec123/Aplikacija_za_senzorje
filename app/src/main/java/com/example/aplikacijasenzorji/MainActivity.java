@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.security.NetworkSecurityPolicy;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;

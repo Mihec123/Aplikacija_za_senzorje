@@ -130,10 +130,12 @@ public class Senzor {
                         temperatura.add(SLABATEMP);
                     }
                     connection.disconnect();
+                    Log.d("INTERNET", String.valueOf(responseCode));
                     Log.d("INTERNET", String.valueOf(temperatura));
 
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Log.d("INTERNET", String.valueOf(e));
                     temperatura.add(SLABATEMP);
                 }
             }
