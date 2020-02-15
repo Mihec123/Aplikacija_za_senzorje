@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         RelativeLayout temp;
 
         //dodamo se en prazen zgori da je mal lufta
-        temp = gumbi.emptySenzor(scale,this);
+        temp = gumbi.emptySpace((int) (50 * scale + 0.5f),this);
         okno.addView(temp);
         for (int stevilo : config.getVrstni_red()) {
             if (stevilo < 0) {

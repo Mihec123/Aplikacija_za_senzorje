@@ -145,59 +145,6 @@ public class Gumb_Creation {
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        //dodamo text senzor
-
-        TextView opis = new TextView(context);
-        opis.setId(View.generateViewId());
-
-        //pogledamo ker napis bomo dali
-        opis.setText("SENZOR");
-
-        opis.setTextColor(Color.WHITE);
-        opis.setTextSize(dp10);
-
-        //nastavimo font
-        Typeface typeface = ResourcesCompat.getFont(context, R.font.chunky);
-        opis.setTypeface(typeface);
-
-
-
-        lp = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT );
-        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        lp.addRule(RelativeLayout.ALIGN_LEFT,im_forground.getId());
-        lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
-        lp.setMargins(dp10,dp10,0,0);
-
-        opis.setLayoutParams(lp);
-        rl.addView(opis);
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-
-
-        //dodamo ime senzorja
-
-        TextView ime = new TextView(context);
-        ime.setId(View.generateViewId());
-        ime.setText(ime_senzorja);
-        ime.setTextColor(Color.WHITE);
-        ime.setTextSize(dp10);
-
-
-        lp = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT );
-        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        lp.addRule(RelativeLayout.ALIGN_LEFT,im_forground.getId());
-        lp.addRule(RelativeLayout.ALIGN_TOP,opis.getId());
-        lp.setMargins(dp10,dp40,0,0);
-
-        ime.setLayoutParams(lp);
-        rl.addView(ime);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////
-
         //dodamo ONOFF gumb
 
         ToggleButton OnOff = new ToggleButton(context);
@@ -226,6 +173,64 @@ public class Gumb_Creation {
         OnOff.setLayoutParams(lp);
         OnOff.setOnClickListener(listener);
         rl.addView(OnOff);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        //dodamo text senzor
+
+        TextView opis = new TextView(context);
+        opis.setId(View.generateViewId());
+
+        //pogledamo ker napis bomo dali
+        opis.setText("SENZOR");
+
+        opis.setTextColor(Color.WHITE);
+        opis.setTextSize(dp10);
+        opis.setGravity(Gravity.LEFT);
+
+        //nastavimo font
+        Typeface typeface = ResourcesCompat.getFont(context, R.font.chunky);
+        opis.setTypeface(typeface);
+
+
+
+        lp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT );
+        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        lp.addRule(RelativeLayout.ALIGN_LEFT,im_forground.getId());
+        lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
+        lp.setMargins(dp10,dp10,dp10,0);
+
+        opis.setLayoutParams(lp);
+        rl.addView(opis);
+
+        ///////////////////////////////////////////////////////////////////////////////////////////
+
+
+        //dodamo ime senzorja
+
+        TextView ime = new TextView(context);
+        ime.setId(View.generateViewId());
+        ime.setText(ime_senzorja);
+        ime.setTextColor(Color.WHITE);
+        ime.setTextSize((int) (8 * scale + 0.5f));
+        ime.setGravity(Gravity.LEFT);
+
+
+        lp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT );
+        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        lp.addRule(RelativeLayout.ALIGN_LEFT,im_forground.getId());
+        lp.addRule(RelativeLayout.BELOW,opis.getId());
+        lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
+        lp.addRule(RelativeLayout.LEFT_OF,OnOff.getId());
+        lp.setMargins(dp10,dp5,dp10,dp10);
+
+        ime.setLayoutParams(lp);
+        rl.addView(ime);
+
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 //        //dodamo image view ki kaze a smo online al offline
@@ -270,7 +275,7 @@ public class Gumb_Creation {
         lp.addRule(RelativeLayout.ALIGN_TOP,im_forground.getId());
         lp.addRule(RelativeLayout.LEFT_OF,OnOff.getId());
         lp.addRule(RelativeLayout.RIGHT_OF,opis.getId());
-        lp.setMargins(dp40,dp10,dp10,0);
+        lp.setMargins(dp10,dp10,dp10,0);
 
         temperatura.setLayoutParams(lp);
         rl.addView(temperatura);
@@ -433,62 +438,6 @@ public class Gumb_Creation {
         opis.setLayoutParams(lp);
         rl.addView(opis);
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-
-
-        //dodamo ime senzorja ali grupe
-
-        TextView ime = new TextView(context);
-        ime.setId(View.generateViewId());
-        ime.setText(ime_grupe);
-        ime.setTextColor(Color.WHITE);
-        ime.setTextSize(dp10);
-
-
-        lp = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT );
-        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        lp.addRule(RelativeLayout.ALIGN_LEFT,im_forground.getId());
-        lp.addRule(RelativeLayout.BELOW,opis.getId());
-        lp.setMargins(dp10,0,0,dp10);
-
-        ime.setLayoutParams(lp);
-        rl.addView(ime);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        //dodamo stevec senzorjev v grupi
-
-        TextView stevec = new TextView(context);
-        stevec.setId(View.generateViewId());
-        stevec.setText(String.valueOf(stevilo_senzorjev));
-        stevec.setText("Online:0/" + String.valueOf(stevilo_senzorjev) + ", On:0");
-        stevec.setTextColor(Color.GREEN);
-        stevec.setTextSize(dp5);
-        stevec.setBackgroundResource(R.drawable.techframelong);
-        stevec.setGravity(Gravity.CENTER);
-        stevec.setPadding(30,0,30,0);
-
-        typeface = ResourcesCompat.getFont(context, R.font.clock_font);
-        stevec.setTypeface(typeface);
-
-        stevec.setTag("stevila");
-
-
-        lp = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT );
-        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        lp.addRule(RelativeLayout.ALIGN_LEFT,im_forground.getId());
-        lp.addRule(RelativeLayout.BELOW,ime.getId());
-        lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
-        lp.setMargins(dp10,0,0,dp10);
-
-        stevec.setLayoutParams(lp);
-        rl.addView(stevec);
-
-
-
         //////////////////////////////////////////////////////////////////////////////////////////
 
         //dodamo ONOFF gumb
@@ -516,6 +465,65 @@ public class Gumb_Creation {
         OnOff.setLayoutParams(lp);
         OnOff.setOnClickListener(listener);
         rl.addView(OnOff);
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //dodamo stevec senzorjev v grupi
+
+        TextView stevec = new TextView(context);
+        stevec.setId(View.generateViewId());
+        stevec.setText(String.valueOf(stevilo_senzorjev));
+        stevec.setText("Online:0/" + String.valueOf(stevilo_senzorjev) + ", On:0");
+        stevec.setTextColor(Color.GREEN);
+        stevec.setTextSize(dp5);
+        stevec.setBackgroundResource(R.drawable.techframelong);
+        stevec.setGravity(Gravity.CENTER);
+        stevec.setPadding(30,0,30,0);
+
+        typeface = ResourcesCompat.getFont(context, R.font.clock_font);
+        stevec.setTypeface(typeface);
+
+        stevec.setTag("stevila");
+
+
+        lp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT );
+        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        lp.addRule(RelativeLayout.ALIGN_LEFT,im_forground.getId());
+        //lp.addRule(RelativeLayout.BELOW,ime.getId());
+        lp.addRule(RelativeLayout.ALIGN_BOTTOM,im_forground.getId());
+        lp.setMargins(dp10,0,0,dp10);
+
+        stevec.setLayoutParams(lp);
+        rl.addView(stevec);
+
+        ///////////////////////////////////////////////////////////////////////////////////////////
+
+
+        //dodamo ime senzorja ali grupe
+
+        TextView ime = new TextView(context);
+        ime.setId(View.generateViewId());
+        ime.setText(ime_grupe);
+        ime.setTextColor(Color.WHITE);
+        ime.setTextSize((int) (8 * scale + 0.5f));
+
+
+        lp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT );
+        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        lp.addRule(RelativeLayout.ALIGN_LEFT,im_forground.getId());
+        lp.addRule(RelativeLayout.BELOW,opis.getId());
+        lp.addRule(RelativeLayout.LEFT_OF,OnOff.getId());
+        lp.addRule(RelativeLayout.ABOVE,stevec.getId());
+        lp.setMargins(dp10,0,dp10,dp5);
+
+        ime.setLayoutParams(lp);
+        rl.addView(ime);
+
+
 
 
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -569,6 +577,25 @@ public class Gumb_Creation {
 
         return rl;
     }
+
+    public RelativeLayout emptySpace(int visina,Context context){
+
+        // Creating a new RelativeLayout
+        RelativeLayout rl = new RelativeLayout(context);
+
+        // Defining the RelativeLayout layout parameters.
+        // In this case I want to fill its parent
+        RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                visina);
+
+        rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+        rl.setLayoutParams(rlp);
+
+        return rl;
+    }
+
     private int enlight(int color, float amount) {
         //Vzame barvo in parameter amount, ki mora bit med 0,1 in iz dane barve za
         //procente amount naredi svetlejso barvo
