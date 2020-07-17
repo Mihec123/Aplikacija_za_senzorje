@@ -49,6 +49,7 @@ public class Senzor {
             String url = "http://" + ip + "/api/relay/0?apikey=" + zeton;
             try {
                 HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.setConnectTimeout(100);
                 responseCode = connection.getResponseCode();
                 connection.disconnect();
             } catch (IOException e) {
@@ -204,6 +205,7 @@ public class Senzor {
             //Log.d("INTERNET", url);
             try {
                 HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.setConnectTimeout(100);
                 responseCode = connection.getResponseCode();
                 InputStream inputStream;
                 if (responseCode == 200) {

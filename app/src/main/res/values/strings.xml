@@ -28,4 +28,8 @@
     <string name="vprasanje_brisanje_grupe">Deleting the group will also delete all sensors in the group. Do you want to delete the group?</string>
     <string name="neuspesen_prizig_senzorja">Failed to turn on sensor </string>
     <string name="neuspeseno_ugasanje_senzorja">Failed to turn off sensor </string>
+    <string name="turningOnSensor">turning on sensor</string>
+    <string name="turningOnGroup">turning on group</string>
+    <string name="turningOffSensor">turning off sensor</string>
+    <string name="turningOffGroup">turning off group</string>
 </resources>

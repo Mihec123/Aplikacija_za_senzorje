@@ -120,7 +120,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 gumbi_oblika.add(temp);
             } else {
                 senzor = config.getSenzorji().get(config.getIdSenzor().indexOf(stevilo));
-                temp = gumbi.OblikaGumbaSenzor(senzor.getIme(), Color.GRAY, false, false, senzor.getId(), scale, MainActivity.this, this);
+                Boolean prikazi_temp;
+                Boolean stikalo = false;
+                if (senzor.getStevilo_podsenzorjev() > 0){
+                    prikazi_temp = true;
+
+                }
+                else{
+                    prikazi_temp = false;
+                    if (!senzor.isPrikazi_vlago()){
+                        stikalo = true;
+                    };
+                }
+                temp = gumbi.OblikaGumbaSenzor(senzor.getIme(), Color.GRAY, false,prikazi_temp, stikalo,false, senzor.getId(), scale, MainActivity.this, this);
                 gumbi_oblika.add(temp);
             }
             okno.addView(temp);
@@ -134,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Runnable pozeni_check = new Runnable() {
         public void run() {
+
             while (!koncajLoop) {
                 Log.i("run_del", "zacel zanko");
                 for (int id : config.getIdSenzor()) {
@@ -624,6 +637,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (sen.getStatusBuffer() > 0 && sen.getStatusBuffer() < BUFFER) {
                             //ce je 1 online, ce je manjsi od buferja ga se smatramo da je online
                             st_online += 1;
+                            Log.d("run_del", "grupa: " + String.valueOf(st_online));
                         }
                         if (sen.getPrizgan()) {
                             st_prizganih += 1;
@@ -979,6 +993,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.i("onClick", "prizgi");
                 if (id > 0) {
                     //senzor
+                    Context context = getApplicationContext();
+                    CharSequence text = getString(R.string.turningOnSensor);
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+
                     Senzor sen = config.getSenzorji().get(config.getIdSenzor().indexOf(id));
                     sen.setCommand(1);
                     //damo na buffer
@@ -986,6 +1007,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     //grupa
                     Log.i("run_del", "prizgi grupo");
+                    Context context = getApplicationContext();
+                    CharSequence text = getString(R.string.turningOnGroup);
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
                     Grupa grupa = config.getGrupe().get(config.getIdGrup().indexOf(id));
                     for (Senzor sen : grupa.getSenzorji()) {
                         Log.i("onClick", String.valueOf(sen));
@@ -998,10 +1025,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.i("onClick", "ugasni");
                 if (id > 0) {
                     //senzor
+                    Context context = getApplicationContext();
+                    CharSequence text = getString(R.string.turningOffSensor);
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+
                     Senzor sen = config.getSenzorji().get(config.getIdSenzor().indexOf(id));
                     sen.setCommand(-1);
                 } else {
                     //grupa
+                    Context context = getApplicationContext();
+                    CharSequence text = getString(R.string.turningOffGroup);
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
                     Log.i("run_del", "ugasni grupo");
                     Grupa grupa = config.getGrupe().get(config.getIdGrup().indexOf(id));
                     for (Senzor sen : grupa.getSenzorji()) {

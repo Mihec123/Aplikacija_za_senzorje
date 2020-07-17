@@ -81,7 +81,19 @@ public class GroupViewActivity extends AppCompatActivity implements View.OnClick
         grupa = config.getGrupe().get(config.getIdGrup().indexOf(id_grupe));
         RelativeLayout temp;
         for (Senzor sen : grupa.getSenzorji()) {
-            temp = gumbi.OblikaGumbaSenzor(sen.getIme(), Color.GRAY, false, false, sen.getId(), scale,GroupViewActivity.this, this);
+            Boolean prikazi_temp;
+            Boolean stikalo = false;
+            if (sen.getStevilo_podsenzorjev() > 0){
+                prikazi_temp = true;
+
+            }
+            else{
+                prikazi_temp = false;
+                if (!sen.isPrikazi_vlago()){
+                    stikalo = true;
+                };
+            }
+            temp = gumbi.OblikaGumbaSenzor(sen.getIme(), Color.GRAY, false,prikazi_temp, stikalo,false, sen.getId(), scale,GroupViewActivity.this, this);
             okno.addView(temp);
             gumbi_oblika.add(temp);
         }
